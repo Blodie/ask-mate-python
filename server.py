@@ -13,13 +13,26 @@ answers = get_table_from_file("./sample_data/answer.csv")
 @app.route('/')
 def route_index():
     table = [{key:value for key, value in question.items() if key in question_headers[:-2]} for question in questions]
-    for question in table:
-        question["submission_time"] = time.strftime("%D %H:%M", time.localtime(int(question["submission_time"])))
-    return render_template('index.html', table=table)
+    try:
+        for question in table:
+            question["submission_time"] = time.strftime("%D %H:%M", time.localtime(int(question["submission_time"])))
+    except:
+        pass
+    finally:
+        return render_template('index.html', table=table)
 
-@app.route('/question/<question_id>')
+@app.route('/question/<question_id>')   
 def see_question(question_id):
-    return render_template('question.html', id=question_id)
+    question = next((question for question in questions if question["id"] == question_id), None)
+    answers_for_this_question = [answer for answer in answers if answer["question_id"] == question_id]
+    try:
+        question["submission_time"] = time.strftime("%D %H:%M", time.localtime(int(question["submission_time"])))
+        for answer in answers_for_this_question:
+            answer["submission_time"] = time.strftime("%D %H:%M", time.localtime(int(answer["submission_time"])))
+    except:
+        pass
+    finally:
+        return render_template('question.html', question=question, answers=answers_for_this_question)
 
 @app.route('/add-question')
 def ask_question():
