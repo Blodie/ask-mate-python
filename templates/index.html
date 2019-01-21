@@ -7,6 +7,31 @@
 </head>
 
 <body>
-    
+    <h1>Questions:</h1>
+    <p>
+    <table border="1">
+        <thead>
+            <tr>
+                {% for key in table[0].keys() %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in table %}
+            <tr>
+                {% for item in row %}
+                    {% if item != "title" %}
+                        <td> {{ row[item] }} </td>
+                    {% else %}
+                        <td><a href="/question/{{ row["id"] }}"> {{ row[item] }} </a></td>
+                    {% endif %}    
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </p>
+    <a href="/add-question"><button>Ask question</button></a>
 </body>
 </html>
