@@ -38,9 +38,12 @@ def see_question(question_id):
 def ask_question():
     return render_template('add_question.html')
 
-@app.route('/question/<question_id>/new-answer')
+
+@app.route('/question/<question_id>/new-answer', methods=['GET','POST'])
 def answer(question_id):
+    return render_template('new_answer.html')
     return render_template('answer.html', id=question_id)
+
 
 if __name__ == "__main__":
     app.run(
