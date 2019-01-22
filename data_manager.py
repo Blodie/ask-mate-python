@@ -14,9 +14,7 @@ def write_table_to_file(filename, table):
 
 
 if __name__ == "__main__":
-    # print(get_table_from_file("./sample_data/answer.csv"))
-    # print(get_table_from_file("./sample_data/question.csv"))
-    # print("\n")
-    # write_table_to_file("./sample_data/test_export.csv", get_table_from_file("./sample_data/question.csv"))
-    # print(get_table_from_file("./sample_data/test_export.csv"))
-    pass
+    print(get_table_from_file("./sample_data/answer.csv"))
+    print("\n")
+    print(get_table_from_file("./sample_data/question.csv"))
+    
