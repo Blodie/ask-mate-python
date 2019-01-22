@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request
-from data_manager import get_table_from_file, write_table_to_file
+from connection import get_table_from_file, write_table_to_file
 from time import strftime, localtime
 app = Flask(__name__)
 
@@ -16,7 +16,7 @@ answers = get_table_from_file("./sample_data/answer.csv")
 @app.route('/')
 def route_index():
     order_by = request.args.get('order_by') if request.args.get('order_by') else "id"
-    direction = False if request.args.get('order_direction') == 'asc' else True
+    direction = True if request.args.get('order_direction') == 'desc' else False
     necessary_headers = question_headers[:-2]
     questions_filtered = [{key:value for key, value in question.items() if key in necessary_headers} for question in questions]
     questions_filtered = sorted(questions_filtered, key = lambda x: x[order_by], reverse = direction)
@@ -30,8 +30,8 @@ def route_index():
 
 @app.route('/question/<question_id>')
 def see_question(question_id):
-    question = next((question for question in questions if question["id"] == question_id), None)
-    answers_for_this_question = [answer for answer in answers if answer["question_id"] == question_id]
+    question = next((question for question in questions if question["id"] == int(question_id)), None)
+    answers_for_this_question = [answer for answer in answers if answer["question_id"] == int(question_id)]
     try:
         question["submission_time"] = strftime("%D %H:%M", localtime(int(question["submission_time"])))
         for answer in answers_for_this_question:
@@ -49,6 +49,12 @@ def ask_question():
 def answer(question_id):
     return render_template('answer.html', id=question_id)
 
+@app.route('/question/<question_id>/delete')
+def delete_question(question_id):
+    global answers
+    del questions[next((i for i, question in enumerate(questions) if question["id"] == int(question_id)), None)]
+    answers = [answer for answer in answers if answer["question_id"] != int(question_id)]
+    return redirect('/')
 
 if __name__ == "__main__":
     app.run(
