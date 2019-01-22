@@ -12,13 +12,13 @@
     <table border="1">
         <thead>
             <tr>
-                {% for key in table[0].keys() %}
+                {% for key in questions[0].keys() %}
                     <th>{{ key }}</th>
                 {% endfor %}
             </tr>
         </thead>
         <tbody>
-            {% for row in table %}
+            {% for row in questions %}
             <tr>
                 {% for item in row %}
                     {% if item != "title" %}
