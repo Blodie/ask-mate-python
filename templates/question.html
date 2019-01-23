@@ -4,15 +4,20 @@
 <head>
     <meta charset="utf-8">
     <title>Question</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 
 <body>
     <p><h1>{{question["title"]}}</h1> - {{question["submission_time"]}}</p>
+    <a href="/question/{{question["id"]}}/vote-down" class="btn btn-danger btn-sm">Downvote</a>
+    <a href="/question/{{question["id"]}}/vote-up" class="btn btn-success btn-sm">Upvote</a>
     <p><h3>{{question["message"]}}</h3></p><br>
     <p><h2>Answers:</h2></p>
     {% if answers %}
         {% for answer in answers %}
-            <p><h5><a href="/answer/{{ answer["id"] }}/delete"><input type="button" value="Delete Answer"></a> - {{answer["submission_time"]}} - {{answer["message"]}}</h5></p>
+            <p><h5><a href="/answer/{{ answer["id"] }}/delete"><input type="button" value="Delete Answer"></a>
+                 - {{answer["submission_time"]}}
+                  - {{answer["message"]}}</h5></p>
         {% endfor %}
     {% else %}
         <p><h5>No answers yet</h5></p>
