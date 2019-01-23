@@ -12,13 +12,13 @@
     <p><h2>Answers:</h2></p>
     {% if answers %}
         {% for answer in answers %}
-            <p><h5>{{answer["submission_time"]}} - {{answer["message"]}}</h5></p>
+            <p><h5><a href="/answer/{{ answer["id"] }}/delete"><input type="button" value="Delete Answer"></a> - {{answer["submission_time"]}} - {{answer["message"]}}</h5></p>
         {% endfor %}
     {% else %}
         <p><h5>No answers yet</h5></p>
     {% endif %}
     <a href="/question/{{question["id"]}}/new-answer"><input type="button" value="Answer" style="float: left;"></a>
-    <a href="/question/{{question["id"]}}/delete"><input type="button" value="Delete" style="float: right;"></a>
+    <a href="/question/{{question["id"]}}/delete"><input type="button" value="Delete Question" style="float: right;"></a>
     <a href="/"><input type="button" value="Back" style="float: right;"></a>
 </body>
 </html>
