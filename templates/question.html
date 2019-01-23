@@ -5,25 +5,62 @@
     <meta charset="utf-8">
     <title>Question</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
 </head>
 
 <body>
-    <p><h1>{{question["title"]}}</h1> - {{question["submission_time"]}}</p>
-    <a href="/question/{{question["id"]}}/vote-down" class="btn btn-danger btn-sm">Downvote</a>
-    <a href="/question/{{question["id"]}}/vote-up" class="btn btn-success btn-sm">Upvote</a>
-    <p><h3>{{question["message"]}}</h3></p><br>
-    <p><h2>Answers:</h2></p>
-    {% if answers %}
-        {% for answer in answers %}
-            <p><h5><a href="/answer/{{ answer["id"] }}/delete"><input type="button" value="Delete Answer"></a>
-                 - {{answer["submission_time"]}}
-                  - {{answer["message"]}}</h5></p>
+    
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <h1>{{question["title"]}}</h1>  
+        </div>
+        <div class="card-body">
+            <h6 class="card-title">
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group mr-2" role="group" aria-label="First group">
+                        <a href="/question/{{question["id"]}}/delete" class="btn btn-dark btn-sm">Del</a>
+                        <a href="/question/{{question["id"]}}/vote-down" class="btn btn-danger btn-sm">Down</a>
+                        <a href="/question/{{question["id"]}}/vote-up" class="btn btn-success btn-sm">Up</a>
+                        <button type="button" class="btn btn-{{"danger" if question["vote_number"] < 0 else "success"}} btn-sm">{{ question["vote_number"] }}</button>
+                    </div>
+                </div>
+            </h6>
+            <h4 class="card-text">{{question["message"]}}</h4>
+        </div>
+    </div>
+    <br>
+
+    
+    <div class="card bg-light mb-3">
+        <div class="card-header">Answers</div>
+        {% if answers %}
+            {% for answer in answers %}
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            <div class="btn-group mr-2" role="group" aria-label="First group">
+                                <a href="/answer/{{ answer["id"] }}/delete" class="btn btn-dark btn-sm">Del</a>
+                                <a href="/answer/{{answer["id"]}}/vote-down" class="btn btn-danger btn-sm">Down</a>
+                                <a href="/answer/{{answer["id"]}}/vote-up" class="btn btn-success btn-sm">Up</a>
+                                <button type="button" class="btn btn-{{"danger" if answer["vote_number"] < 0 else "success"}} btn-sm">{{ answer["vote_number"] }}</button>
+                            </div>
+                        </div>
+                    </h5>
+                    <p class="card-text">{{answer["submission_time"]}}
+                            - {{answer["message"]}}</p>
+                </div>
+    </div>
         {% endfor %}
     {% else %}
-        <p><h5>No answers yet</h5></p>
+        <br>
+        <p>No answers yet</p>
     {% endif %}
-    <a href="/question/{{question["id"]}}/new-answer"><input type="button" value="Answer" style="float: left;"></a>
-    <a href="/question/{{question["id"]}}/delete"><input type="button" value="Delete Question" style="float: right;"></a>
-    <a href="/"><input type="button" value="Back" style="float: right;"></a>
+
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <a href="/question/{{question["id"]}}/new-answer" class="btn btn-warning btn-lg">Answer</a>
+            <a href="/" class="btn btn-primary btn-lg">Home</a>
+        </div>
+    </div>            
 </body>
 </html>

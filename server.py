@@ -52,7 +52,7 @@ def delete_answer(answer_id):
     save_answers(answers)
     return redirect(f"/question/{question_id}")
 
-@app.route('/question/<question_id>/vote-<vote>', methods=['GET', 'POST'])
+@app.route('/question/<question_id>/vote-<vote>')
 def vote_on_question(question_id, vote):
     vote = True if vote == "up" else False
     questions = get_questions()
@@ -60,6 +60,15 @@ def vote_on_question(question_id, vote):
     questions[i]["vote_number"] += 1 if vote else -1
     save_questions(questions)
     return redirect(f'/question/{questions[i]["id"]}')
+
+@app.route('/answer/<answer_id>/vote-<vote>')
+def vote_on_answer(answer_id, vote):
+    vote = True if vote == "up" else False
+    answers = get_answers()
+    i = next((i for i, answer in enumerate(answers) if answer["id"] == int(answer_id)), None)
+    answers[i]["vote_number"] += 1 if vote else -1
+    save_answers(answers)
+    return redirect(f'/question/{answers[i]["question_id"]}')
 
 if __name__ == "__main__":
     app.run(
