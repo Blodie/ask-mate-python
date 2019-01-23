@@ -11,7 +11,7 @@ def route_index():
     questions = get_questions_table()
     order_by = request.args.get('order_by') if request.args.get('order_by') else "id"
     direction = True if request.args.get('order_direction') == 'desc' else False
-    necessary_headers = list(questions[0].keys())[:-2]
+    necessary_headers = list(questions[0].keys())[:-2] if questions else None
     questions_filtered = [{key:value for key, value in question.items() if key in necessary_headers} for question in questions]
     questions_filtered = sorted(questions_filtered, key = lambda x: x[order_by], reverse = direction)
     return render_template('index.html', questions=questions_filtered, direction=direction)
