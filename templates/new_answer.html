@@ -5,11 +5,11 @@
     </head>
     <body>
         <h2>Add new Answer</h2>
-        <form action="/question/<question_id>/new-answer" method="post">
+        <form action="/question/{{id}}/new-answer" method="post">
             <label for="answer-input">Your Answer</label>
             <textarea id="answer-input" name="answer" rows="12" cols="80" >{{answer}}</textarea>
             <button type="submit">Send Answer</button>
-            <button type="submit">Back<a href="/question.html"></button>
+              <input type="button" value="Go back!" onclick="/<question_id>.back()">
         </form>
     </body>
 </html>

@@ -12,8 +12,8 @@
     <table border="1">
         <thead>
             <tr>
-                {% for key in questions[0].keys() %}
-                    <th>{{ key }}</th>
+                {% for header in questions[0].keys() %}
+                   <th><a href="/list?order_by={{ header }}&order_direction={{ "asc" if direction else "desc" }}">{{ header }}</a></th>
                 {% endfor %}
             </tr>
         </thead>
