@@ -18,9 +18,12 @@ def route_index():
 def see_question(question_id):
     questions = get_questions()
     answers = get_answers()
-    question = next((question for question in questions if question["id"] == int(question_id)), None)
+    i = next((i for i, question in enumerate(questions) if question["id"] == int(question_id)))
+    if not request.args.get('inc'):
+        questions[i]["view_number"] += 1
+        save_questions(questions)
     answers_for_this_question = [answer for answer in answers if answer["question_id"] == int(question_id)]
-    return render_template('question.html', question=question, answers=answers_for_this_question)
+    return render_template('question.html', question=questions[i], answers=answers_for_this_question)
 
 @app.route('/add-question', methods=['GET', 'POST'])
 def ask_question():
@@ -47,7 +50,7 @@ def edit_question(question_id):
         questions[i]["title"] = request.form["title"]
         questions[i]["message"] = request.form["msg"]
         save_questions(questions)   
-        return redirect(f"/question/{question_id}")
+        return redirect(f"/question/{question_id}?inc=False")
     return render_template('add_question.html', question=questions[i])
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
@@ -63,7 +66,7 @@ def answer(question_id):
         new_ask['image'] = ''
         answers.append(new_ask)
         save_answers(answers)
-        return redirect(f'/question/{question_id}')
+        return redirect(f'/question/{question_id}?inc=False')
     return render_template('answer.html', id=question_id)
 
 @app.route('/question/<question_id>/delete')
@@ -83,7 +86,7 @@ def delete_answer(answer_id):
     question_id = next((answer for answer in answers if answer["id"] == int(answer_id)), None)["question_id"]
     answers = [answer for answer in answers if answer["id"] != int(answer_id)]
     save_answers(answers)
-    return redirect(f"/question/{question_id}")
+    return redirect(f"/question/{question_id}?inc=False")
 
 @app.route('/question/<question_id>/vote-<vote>')
 def vote_on_question(question_id, vote):
@@ -92,7 +95,7 @@ def vote_on_question(question_id, vote):
     i = next((i for i, question in enumerate(questions) if question["id"] == int(question_id)), None)
     questions[i]["vote_number"] += 1 if vote else -1
     save_questions(questions)
-    return redirect(f'/question/{questions[i]["id"]}')
+    return redirect(f'/question/{questions[i]["id"]}?inc=False')
 
 @app.route('/answer/<answer_id>/vote-<vote>')
 def vote_on_answer(answer_id, vote):
@@ -101,7 +104,7 @@ def vote_on_answer(answer_id, vote):
     i = next((i for i, answer in enumerate(answers) if answer["id"] == int(answer_id)), None)
     answers[i]["vote_number"] += 1 if vote else -1
     save_answers(answers)
-    return redirect(f'/question/{answers[i]["question_id"]}')
+    return redirect(f'/question/{answers[i]["question_id"]}?inc=False')
 
 if __name__ == "__main__":
     app.run(
