@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, request
 from data_manager import get_questions, get_answers, save_answers, save_questions
+from util import get_submission_time
 app = Flask(__name__)
 
 # question_headers = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
@@ -26,6 +27,20 @@ def see_question(question_id):
 
 @app.route('/add-question', methods=['GET', 'POST'])
 def ask_question():
+    questions = get_questions()
+    new_ask = {}
+    if request.method == 'POST':
+        new_ask['id'] = len(questions)
+        new_ask['submission_time'] = get_submission_time()
+        new_ask['view_number'] = 0
+        new_ask['vote_number'] = 0
+        new_ask['title'] = request.form['title']
+        new_ask['message'] = request.form['msg']
+        new_ask['image'] = ''
+        question_id = len(questions)
+        questions.append(new_ask)
+        save_questions(questions)
+        return redirect(f'/question/{question_id}')
     return render_template('add_question.html')
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
