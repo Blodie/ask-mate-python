@@ -1,10 +1,7 @@
 from flask import Flask, render_template, redirect, request
 from data_manager import get_questions, get_answers, save_answers, save_questions
-from util import get_submission_time
+from util import get_current_time
 app = Flask(__name__)
-
-# question_headers = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
-# answer_headers = ["id", "submission_time", "vote_number", "question_id", "message", "image"]
 
 @app.route('/list')
 @app.route('/')
@@ -31,7 +28,7 @@ def ask_question():
     new_ask = {}
     if request.method == 'POST':
         new_ask['id'] = max([question["id"] for question in questions]) + 1
-        new_ask['submission_time'] = get_submission_time()
+        new_ask['submission_time'] = get_current_time()
         new_ask['view_number'] = 0
         new_ask['vote_number'] = 0
         new_ask['title'] = request.form['title']
@@ -59,7 +56,7 @@ def answer(question_id):
     new_ask = {}
     if request.method == 'POST':
         new_ask['id'] = len(answers)
-        new_ask['submission_time'] = get_submission_time()
+        new_ask['submission_time'] = get_current_time()
         new_ask['vote_number'] = 0
         new_ask['question_id'] = question_id
         new_ask['message'] = request.form['msg']

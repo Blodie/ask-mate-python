@@ -8,7 +8,7 @@
 
 </head>
 
-<body>
+<body class="p-3 mb-2 bg-white text-black">
     <div class="card bg-light mb-3">
         <div class="card-header">
             <h1>{{question["title"]}}</h1>  
@@ -17,43 +17,42 @@
             <h6 class="card-title">
                 <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                     <div class="btn-group mr-2" role="group" aria-label="First group">
-                        <a href="/question/{{question["id"]}}/delete" class="btn btn-dark btn-sm">Del</a>
-                        <a href="/question/{{question["id"]}}/vote-down" class="btn btn-danger btn-sm">Down</a>
-                        <a href="/question/{{question["id"]}}/vote-up" class="btn btn-success btn-sm">Up</a>
-                    </div>
-                    <div class="btn-group mr-2" role="group" aria-label="Second group">
-                        <button type="button" class="btn btn-{{"danger" if question["vote_number"] < 0 else "success"}} btn-sm">{{ question["vote_number"] }}</button>
+                        <a href="/question/{{question['id']}}/delete" class="btn btn-dark btn-sm">▬</a>
+                        <a href="/question/{{question['id']}}/vote-down" class="btn btn-danger btn-sm">◄</a>
+                        <button type="button" class="btn btn-{{'danger' if question['vote_number'] < 0 else 'success'}} btn-sm">{{ question['vote_number'] }}</button>
+                        <a href="/question/{{question['id']}}/vote-up" class="btn btn-success btn-sm">►</a>
                     </div>
                 </div>
             </h6>
             <h4 class="card-text">{{question["message"]}}</h4>
             <br>
-            <a href="/question/{{question["id"]}}/edit" class="btn btn-info btn-sm">Edit Question</a>
+            <a href="/question/{{question['id']}}/edit" class="btn btn-info btn-sm">Edit Question</a>
         </div>
     </div>
     <br>
     <div class="card bg-light mb-3">
         <div class="card-header">Answers</div>
-        {% if answers %}
-            {% for answer in answers %}
-                <div class="card-body">
+        <div class="card-body">
+            {% if answers %}
+                {% for answer in answers %}
+                    <div class="card bg-light mb-3">
                     <h5 class="card-title">
                         <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                             <div class="btn-group mr-2" role="group" aria-label="First group">
-                                <a href="/answer/{{ answer["id"] }}/delete" class="btn btn-dark btn-sm">Del</a>
-                                <a href="/answer/{{answer["id"]}}/vote-down" class="btn btn-danger btn-sm">Down</a>
-                                <a href="/answer/{{answer["id"]}}/vote-up" class="btn btn-success btn-sm">Up</a>
-                            </div>
-                            <div class="btn-group mr-2" role="group" aria-label="Second group">
-                                <button type="button" class="btn btn-{{"danger" if answer["vote_number"] < 0 else "success"}} btn-sm">{{ answer["vote_number"] }}</button>
+                                <a href="/answer/{{ answer['id'] }}/delete" class="btn btn-dark btn-sm">▬</a>
+                                <a href="/answer/{{answer['id']}}/vote-down" class="btn btn-danger btn-sm">◄</a>
+                                <button type="button" class="btn btn-{{'danger' if answer['vote_number'] < 0 else 'success'}} btn-sm">{{ answer['vote_number'] }}</button>
+                                <a href="/answer/{{answer['id']}}/vote-up" class="btn btn-success btn-sm">►</a>
                             </div>
                         </div>
                     </h5>
                     <p class="card-text">{{answer["submission_time"]}}
                             - {{answer["message"]}}</p>
-                </div>
+                    </div>
+                {% endfor %}
+            </div>
     </div>
-        {% endfor %}
+        
     {% else %}
         <br>
         <p>No answers yet</p>
@@ -61,9 +60,12 @@
 
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group mr-2" role="group" aria-label="First group">
-            <a href="/question/{{question["id"]}}/new-answer" class="btn btn-warning btn">Answer</a>
+            <a href="/question/{{question['id']}}/new-answer" class="btn btn-secondary btn">Answer</a>
+        </div>
+        <div class="btn-group mr-2" role="group">
             <a href="/" class="btn btn-primary btn">Home</a>
         </div>
+
     </div>            
 </body>
 </html>

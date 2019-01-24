@@ -3,23 +3,20 @@
 <html lang="en">
 <head>
     <title>List</title>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-
-
 </head>
 
-<body>
+<body class="p-3 mb-2 bg-white text-black">
     <h1>Questions:</h1>
     <p>
     {% if questions %}
-    <table class="table table-bordered">
+    <table class="table table-striped table-bordered">
         <thead>
             <tr>
                 {% for header in questions[0].keys() %}
-                   <th scope="col"><a href="/list?order_by={{ header }}&order_direction={{ "asc" if direction else "desc" }}">{{ header }}</a></th>
+                   <th scope="col"><a href="/list?order_by={{ header }}&order_direction={{ 'asc' if direction else 'desc' }}" class="text-secondary">{{ header }}</a></th>
                 {% endfor %}
             </tr>
         </thead>
@@ -30,7 +27,7 @@
                     {% if item != "title" %}
                         <td> {{ row[item] }} </td>
                     {% else %}
-                        <td><a href="/question/{{ row["id"] }}"> {{ row[item] }} </a></td>
+                        <td><a href="/question/{{ row['id'] }}" class="text-secondary"> {{ row[item] }} </a></td>
                     {% endif %}    
                 {% endfor %}
             </tr>
@@ -41,6 +38,6 @@
     <h4>No questions</h4>
     {% endif %}
     </p>
-    <a href="/add-question" class="btn btn-warning btn">Ask question</a>
+    <a href="/add-question" class="btn btn-secondary btn">Ask question</a>
 </body>
 </html>
