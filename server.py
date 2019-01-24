@@ -27,7 +27,7 @@ def ask_question():
     questions = get_questions()
     new_ask = {}
     if request.method == 'POST':
-        new_ask['id'] = max([question["id"] for question in questions]) + 1
+        new_ask['id'] = (max([question["id"] for question in questions]) + 1) if questions else 0
         new_ask['submission_time'] = get_current_time()
         new_ask['view_number'] = 0
         new_ask['vote_number'] = 0
@@ -55,7 +55,7 @@ def answer(question_id):
     answers = get_answers()
     new_ask = {}
     if request.method == 'POST':
-        new_ask['id'] = len(answers)
+        new_ask['id'] = (max([answer["id"] for answer in answers]) + 1) if answers else 0
         new_ask['submission_time'] = get_current_time()
         new_ask['vote_number'] = 0
         new_ask['question_id'] = question_id

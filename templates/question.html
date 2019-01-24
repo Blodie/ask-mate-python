@@ -46,18 +46,15 @@
                             </div>
                         </div>
                     </h5>
-                    <p class="card-text">{{answer["submission_time"]}}
-                            - {{answer["message"]}}</p>
+                    <p class="card-text">{{answer["submission_time"]}} - {{answer["message"]}}</p>
                     </div>
-                {% endfor %}
-            </div>
-    </div>
-        
+                {% endfor %}        
     {% else %}
         <br>
         <p>No answers yet</p>
     {% endif %}
-
+    </div>
+    </div>
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group mr-2" role="group" aria-label="First group">
             <a href="/question/{{question['id']}}/new-answer" class="btn btn-secondary btn">Answer</a>
