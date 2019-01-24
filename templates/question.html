@@ -9,7 +9,6 @@
 </head>
 
 <body>
-    
     <div class="card bg-light mb-3">
         <div class="card-header">
             <h1>{{question["title"]}}</h1>  
@@ -28,11 +27,11 @@
                 </div>
             </h6>
             <h4 class="card-text">{{question["message"]}}</h4>
+            <br>
+            <a href="/question/{{question["id"]}}/edit" class="btn btn-info btn-sm">Edit Question</a>
         </div>
     </div>
     <br>
-
-    
     <div class="card bg-light mb-3">
         <div class="card-header">Answers</div>
         {% if answers %}

@@ -41,7 +41,18 @@ def ask_question():
         questions.append(new_ask)
         save_questions(questions)
         return redirect(f'/question/{question_id}')
-    return render_template('add_question.html')
+    return render_template('add_question.html', question=None)
+
+@app.route('/question/<question_id>/edit', methods=['GET', 'POST'])
+def edit_question(question_id):
+    questions = get_questions()
+    i = next((i for i, question in enumerate(questions) if question["id"] == int(question_id)), None)
+    if request.method == "POST":
+        questions[i]["title"] = request.form["title"]
+        questions[i]["message"] = request.form["msg"]
+        save_questions(questions)   
+        return redirect(f"/question/{question_id}")
+    return render_template('add_question.html', question=questions[i])
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
 def answer(question_id):
