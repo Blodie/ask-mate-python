@@ -30,17 +30,16 @@ def ask_question():
     questions = get_questions()
     new_ask = {}
     if request.method == 'POST':
-        new_ask['id'] = len(questions)
+        new_ask['id'] = max([question["id"] for question in questions]) + 1
         new_ask['submission_time'] = get_submission_time()
         new_ask['view_number'] = 0
         new_ask['vote_number'] = 0
         new_ask['title'] = request.form['title']
         new_ask['message'] = request.form['msg']
         new_ask['image'] = ''
-        question_id = len(questions)
         questions.append(new_ask)
         save_questions(questions)
-        return redirect(f'/question/{question_id}')
+        return redirect(f'/question/{new_ask["id"]}')
     return render_template('add_question.html', question=None)
 
 @app.route('/question/<question_id>/edit', methods=['GET', 'POST'])
