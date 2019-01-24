@@ -6,7 +6,19 @@
     <title>Add</title>
 </head>
 
-<body>
-    
+
+    <h3>Question title:</h3>
+<form action="/add-question" method="post">
+    <input type="text" name="title"><br>
+    <br>
+    <h3> Question message:</h3>
+    <textarea name="msg" rows="8" cols="40"></textarea><br>
+        <input type="submit" value="Ask" style="float: left;">
+    <a href="/"><input type="button" value="Back" style="float: left;"></a>
+</form>
+<br>
+
+
+
 </body>
 </html>
