@@ -55,6 +55,18 @@ def edit_question(question_id):
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
 def answer(question_id):
+    answers = get_answers()
+    new_ask = {}
+    if request.method == 'POST':
+        new_ask['id'] = len(answers)
+        new_ask['submission_time'] = get_submission_time()
+        new_ask['vote_number'] = 0
+        new_ask['question_id'] = question_id
+        new_ask['message'] = request.form['msg']
+        new_ask['image'] = ''
+        answers.append(new_ask)
+        save_answers(answers)
+        return redirect(f'/question/{question_id}')
     return render_template('answer.html', id=question_id)
 
 @app.route('/question/<question_id>/delete')
