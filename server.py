@@ -46,8 +46,7 @@ def delete_question(question_id):
 def delete_answer(answer_id):
     questions = get_questions()
     answers = get_answers()
-    answer_to_be_deleted = next((answer for answer in answers if answer["id"] == int(answer_id)), None)
-    question_id = str(next((question for question in questions if question["id"] == answer_to_be_deleted["question_id"]), None)["id"])
+    question_id = next((answer for answer in answers if answer["id"] == int(answer_id)), None)["question_id"]
     answers = [answer for answer in answers if answer["id"] != int(answer_id)]
     save_answers(answers)
     return redirect(f"/question/{question_id}")

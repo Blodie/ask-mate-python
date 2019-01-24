@@ -21,6 +21,8 @@
                         <a href="/question/{{question["id"]}}/delete" class="btn btn-dark btn-sm">Del</a>
                         <a href="/question/{{question["id"]}}/vote-down" class="btn btn-danger btn-sm">Down</a>
                         <a href="/question/{{question["id"]}}/vote-up" class="btn btn-success btn-sm">Up</a>
+                    </div>
+                    <div class="btn-group mr-2" role="group" aria-label="Second group">
                         <button type="button" class="btn btn-{{"danger" if question["vote_number"] < 0 else "success"}} btn-sm">{{ question["vote_number"] }}</button>
                     </div>
                 </div>
@@ -42,6 +44,8 @@
                                 <a href="/answer/{{ answer["id"] }}/delete" class="btn btn-dark btn-sm">Del</a>
                                 <a href="/answer/{{answer["id"]}}/vote-down" class="btn btn-danger btn-sm">Down</a>
                                 <a href="/answer/{{answer["id"]}}/vote-up" class="btn btn-success btn-sm">Up</a>
+                            </div>
+                            <div class="btn-group mr-2" role="group" aria-label="Second group">
                                 <button type="button" class="btn btn-{{"danger" if answer["vote_number"] < 0 else "success"}} btn-sm">{{ answer["vote_number"] }}</button>
                             </div>
                         </div>
