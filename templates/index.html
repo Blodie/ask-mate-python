@@ -15,7 +15,7 @@
     <table class="table table-striped table-bordered">
         <thead>
             <tr>
-                {% for header in questions[0].keys() %}
+                {% for header in headers %}
                    <th scope="col"><a href="/list?order_by={{ header }}&order_direction={{ 'asc' if direction else 'desc' }}" class="text-secondary">{{ header }}</a></th>
                 {% endfor %}
             </tr>
@@ -24,11 +24,13 @@
             {% for row in questions %}
             <tr>
                 {% for item in row %}
-                    {% if item != "title" %}
-                        <td> {{ row[item] }} </td>
-                    {% else %}
-                        <td><a href="/question/{{ row['id'] }}" class="text-secondary"> {{ row[item] }} </a></td>
-                    {% endif %}    
+                    {% if item in headers %}
+                        {% if item != "title" %}
+                            <td> {{ row[item] }} </td>
+                        {% else %}
+                            <td><a href="/question/{{ row['id'] }}" class="text-secondary"> {{ row[item] }} </a></td>
+                        {% endif %}    
+                    {% endif %}
                 {% endfor %}
             </tr>
             {% endfor %}
