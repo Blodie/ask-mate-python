@@ -1,5 +1,4 @@
 from flask import Flask, render_template, redirect, request
-from data_manager import get_questions, get_answers, save_answers, save_questions
 from datetime import datetime
 app = Flask(__name__)
 
