@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, request
 from data_manager import get_questions, get_answers, save_answers, save_questions
+from datetime import datetime
 app = Flask(__name__)
 
 # question_headers = ["id", "submission_time", "view_number", "vote_number", "title", "message", "image"]
@@ -31,7 +32,11 @@ def ask_question():
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
 def answer(question_id):
     if request.method == 'POST':
-        answers =
+        answers = get_answers()
+        date = str(datetime.now())
+        new_answer = {'id' : len(answers), 'submission_time' :date, 'vote_number' : 0,'question_id' : question_id,'message' : answer}
+        answers.append(new_answer)
+        save_answers(answers)
         return redirect('/question/<question_id>')
 
     return render_template('new_answer.html', id=question_id)
