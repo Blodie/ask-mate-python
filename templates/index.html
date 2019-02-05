@@ -2,19 +2,21 @@
 
 <html lang="en">
 <head>
-    <meta charset="utf-8">
     <title>List</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 
-<body>
+<body class="p-3 mb-2 bg-white text-black">
     <h1>Questions:</h1>
     <p>
     {% if questions %}
-    <table border="1">
+    <table class="table table-striped table-bordered">
         <thead>
             <tr>
-                {% for header in questions[0].keys() %}
-                   <th><a href="/list?order_by={{ header }}&order_direction={{ "asc" if direction else "desc" }}">{{ header }}</a></th>
+                {% for header in headers %}
+                   <th scope="col"><a href="/list?order_by={{ header }}&order_direction={{ 'asc' if direction else 'desc' }}" class="text-secondary">{{ header }}</a></th>
                 {% endfor %}
             </tr>
         </thead>
@@ -22,11 +24,13 @@
             {% for row in questions %}
             <tr>
                 {% for item in row %}
-                    {% if item != "title" %}
-                        <td> {{ row[item] }} </td>
-                    {% else %}
-                        <td><a href="/question/{{ row["id"] }}"> {{ row[item] }} </a></td>
-                    {% endif %}    
+                    {% if item in headers %}
+                        {% if item != "title" %}
+                            <td> {{ row[item] }} </td>
+                        {% else %}
+                            <td><a href="/question/{{ row['id'] }}" class="text-secondary"> {{ row[item] }} </a></td>
+                        {% endif %}    
+                    {% endif %}
                 {% endfor %}
             </tr>
             {% endfor %}
@@ -36,6 +40,6 @@
     <h4>No questions</h4>
     {% endif %}
     </p>
-    <a href="/add-question"><button>Ask question</button></a>
+    <a href="/add-question" class="btn btn-secondary btn">Ask question</a>
 </body>
 </html>

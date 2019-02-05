@@ -3,10 +3,17 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Andwer</title>
+    <title>Answer</title>
 </head>
 
 <body>
-    
+    <h3> Answer :</h3>
+    <form action="/question/{{ id }}/new-answer" method="post">
+    <label>
+        <textarea name="msg" rows="8" cols="40" minlength="10"></textarea>
+    </label><br>
+        <input type="submit" value=Send style="float: left;">
+    <a href="/question/{{ id }}"><input type="button" value="Back" style="float: left;"></a>
+    </form>
 </body>
 </html>

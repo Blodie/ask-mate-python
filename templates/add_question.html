@@ -6,7 +6,15 @@
     <title>Add</title>
 </head>
 
-<body>
-    
+<body class="p-3 mb-2 bg-white text-black">
+    <h3>Question title:</h3>
+<form action="{{'/add-question' if not question else ('/question/' ~ question['id'] ~ '/edit')}}" method="post">
+    <input type="text" name="title" value="{{question['title'] if question}}"><br>
+    <br>
+    <h3> Question message:</h3>
+    <textarea name="msg" rows="8" cols="40">{{question["message"] if question}}</textarea><br>
+        <input type="submit" value="{{'Ask' if not question else 'Edit'}}" style="float: left;">
+    <a href="/{{('question/' ~ question['id']) if question}}"><input type="button" value="Back" style="float: left;"></a>
+</form>
 </body>
 </html>
