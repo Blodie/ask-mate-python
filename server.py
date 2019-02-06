@@ -54,7 +54,6 @@ def edit_question(question_id):
 
 @app.route('/question/<question_id>/new-answer', methods=['GET', 'POST'])
 def answer(question_id):
-<<<<<<< HEAD
     if request.method == 'POST':
         answers = get_answers()
         date = str(datetime.now())
