@@ -34,8 +34,8 @@ def ask_question():
 @app.route('/question/<int:question_id>/edit', methods=['GET', 'POST'])
 def edit_question(question_id):
     if request.method == "POST":
-        question = update_question(question_id, request.form['title'], request.form['msg'])
-        return redirect(f"/question/{question['id']}?inc=False")
+        update_question(question_id, request.form['title'], request.form['msg'])
+        return redirect(f"/question/{question_id}?inc=False")
     return render_template('add_question.html', question=get_question_by_id(question_id))
 
 
@@ -55,7 +55,8 @@ def delete_question(question_id):
 
 @app.route('/answer/<int:answer_id>/delete')
 def delete_answer(answer_id):
-    question_id = del_answer(answer_id)
+    question_id = get_question_id_by_answer_id(answer_id)
+    del_answer(answer_id)
     return redirect(f"/question/{question_id}?inc=False")
 
 
@@ -69,7 +70,9 @@ def vote_on_question(question_id, vote):
 @app.route('/answer/<int:answer_id>/vote-<vote>')
 def vote_on_answer(answer_id, vote):
     vote = True if vote == "up" else False
-    question_id = vote_answer(answer_id, vote)
+    question_id = get_question_id_by_answer_id(answer_id)
+    get_question_id_by_answer_id(answer_id)
+    vote_answer(answer_id, vote)
     return redirect(f'/question/{question_id}?inc=False')
 
 
