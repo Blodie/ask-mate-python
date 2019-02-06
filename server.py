@@ -10,7 +10,7 @@ def route_index():
     order_by = request.args.get('order_by') if request.args.get('order_by') else "id"
     direction = True if request.args.get('order_direction') == 'desc' else False
     necessary_headers = list(questions[0].keys())[:-2] if questions else None
-    questions = sorted(questions, key = lambda x: x[order_by], reverse = direction)
+    questions = sorted(questions, key=lambda x: x[order_by], reverse=direction)
     return render_template('index.html', questions=questions, headers=necessary_headers, direction=direction)
 
 
@@ -74,6 +74,14 @@ def vote_on_answer(answer_id, vote):
     get_question_id_by_answer_id(answer_id)
     vote_answer(answer_id, vote)
     return redirect(f'/question/{question_id}?inc=False')
+
+
+@app.route('/question/<int:question_id>/new-comment', methods=['GET', 'POST'])
+def add_comment_to_question(question_id):
+    if request.method == 'POST':
+        new_comment_on_question(question_id, request.form['comment'])
+        return redirect(f'/question/{question_id}?inc=False')
+    return render_template('comment.html', id=question_id)
 
 
 if __name__ == "__main__":
