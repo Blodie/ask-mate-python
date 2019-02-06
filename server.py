@@ -4,14 +4,20 @@ app = Flask(__name__)
 
 
 @app.route('/list')
-@app.route('/')
-def route_index():
+def list_all_questions():
     questions = get_questions()
     order_by = request.args.get('order_by') if request.args.get('order_by') else "id"
     direction = True if request.args.get('order_direction') == 'desc' else False
     necessary_headers = list(questions[0].keys())[:-2] if questions else None
     questions = sorted(questions, key=lambda x: x[order_by], reverse=direction)
     return render_template('index.html', questions=questions, headers=necessary_headers, direction=direction)
+
+
+@app.route('/')
+def route_index():
+    questions = get_questions()[-1:-6:-1]
+    necessary_headers = list(questions[0].keys())[:-2] if questions else None
+    return render_template('index.html', questions=questions, headers=necessary_headers)
 
 
 @app.route('/question/<int:question_id>')

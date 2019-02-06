@@ -75,12 +75,12 @@ def del_question(cursor, question_id):
 
 
 @connection_handler
-def get_question_id_by_answer_id(cursor, id):
+def get_question_id_by_answer_id(cursor, answer_id):
     cursor.execute("""
-                    SELECT * FROM question
+                    SELECT question_id FROM answer
                     WHERE id = %(id)s ;
                    """,
-                   {'id': id})
+                   {'id': answer_id})
     question = cursor.fetchall()
     return question[0]['id']
 
