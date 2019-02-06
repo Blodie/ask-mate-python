@@ -47,6 +47,8 @@
                         </div>
                     </h5>
                     <p class="card-text">{{answer["submission_time"]}} - {{answer["message"]}}</p>
+                    <br>
+                    <a href="/answer/{{answer['id']}}/edit" class="btn btn-info btn-sm">Edit Answer</a>
                     </div>
                 {% endfor %}        
     {% else %}
