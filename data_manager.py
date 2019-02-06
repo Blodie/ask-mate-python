@@ -118,6 +118,14 @@ def vote_answer(cursor, answer_id, vote):
                    {'vote': (answer_vote_number+1) if vote else (answer_vote_number-1), 'answer_id': answer_id})
 
 
+@connection_handler
+def new_comment_on_question(cursor, question_id, message):
+    cursor.execute("""
+                    INSERT INTO comment (submission_time, question_id, message)
+                    VALUES (%(submission_time)s, %(question_id)s, %(message)s)
+                    """, {'submission_time': get_current_time(), 'question_id': question_id, 'message': message})
+
+
 if __name__ == '__main__':
     print(get_question_by_id(1))
 
