@@ -176,4 +176,4 @@ def get_comments_by_answer_id(cursor, answer_id):
 
 
 if __name__ == '__main__':
-    pass
+    print(get_question_id_by_comment_id(1))

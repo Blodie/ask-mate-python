@@ -6,11 +6,10 @@ import os
 def get_connection_string():
     # setup connection string
     # to do this, please define these environment variables first
-<<<<<<< HEAD
     user_name = 'safi'
     password = 'chianti'
     host = 'localhost'
-    database_name = 'askmate'
+    database_name = 'firstdatabase'
 
     env_variables_defined = user_name and password and host and database_name
 

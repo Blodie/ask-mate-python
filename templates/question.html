@@ -88,6 +88,7 @@
                 <table class="table-striped table-borderless" width="100%">
                 {% for comment in comments_for_answers[answer["id"]] %}
                     <tr><td style="padding-left: 5%"><p style="margin-bottom: 2px">{{ comment['message'] }} </p>
+                        <a href="/comments/{{comment['id']}}/delete" class="btn btn-dark btn-sm">▬</a>
                                                      <p style="margin-bottom: 0px;font-size: 12px;font-style: italic;"> {{ comment['submission_time'] }} </p></td></tr>
                 {% endfor %}
                 </table>
