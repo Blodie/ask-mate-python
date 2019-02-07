@@ -65,10 +65,22 @@ def update_question(cursor, question_id, title, message, image=None):
 
 @connection_handler
 def del_question(cursor, question_id):
-    cursor.execute("""
-                        DELETE FROM answer WHERE question_id=%(question_id)s                   
-                    """, {'question_id': question_id})
+    answer_ids = tuple([answer['id'] for answer in get_answers_by_q_id(question_id)])
 
+    if answer_ids:
+        cursor.execute("""
+                            DELETE FROM comment WHERE answer_id IN %(answer_ids)s
+                        """, {'answer_ids': answer_ids})
+        cursor.execute("""
+                            DELETE FROM answer WHERE id IN %(answer_ids)s                   
+                        """, {'answer_ids': answer_ids})
+
+    cursor.execute("""
+                        DELETE FROM comment WHERE question_id=%(question_id)s
+                    """, {'question_id': question_id})
+    cursor.execute("""
+                        DELETE FROM question_tag WHERE question_id=%(question_id)s
+                    """, {'question_id': question_id})
     cursor.execute("""
                         DELETE FROM question WHERE id=%(question_id)s                   
                     """, {'question_id': question_id})
@@ -77,16 +89,18 @@ def del_question(cursor, question_id):
 @connection_handler
 def get_question_id_by_answer_id(cursor, answer_id):
     cursor.execute("""
-                    SELECT question_id FROM answer
-                    WHERE id = %(id)s ;
+                    SELECT * FROM answer
+                    WHERE id=%(id)s
                    """,
                    {'id': answer_id})
-    question = cursor.fetchall()
-    return question[0]['id']
+    return cursor.fetchall()[0]['question_id']
 
 
 @connection_handler
 def del_answer(cursor, answer_id):
+    cursor.execute("""
+                        DELETE FROM comment WHERE answer_id=%(answer_id)s                   
+                    """, {'answer_id': answer_id})
     cursor.execute("""
                         DELETE FROM answer WHERE id=%(answer_id)s                   
                     """, {'answer_id': answer_id})
@@ -126,7 +140,31 @@ def new_comment_on_question(cursor, question_id, message):
                     """, {'submission_time': get_current_time(), 'question_id': question_id, 'message': message})
 
 
+@connection_handler
+def new_comment_on_answer(cursor, answer_id, message):
+    cursor.execute("""
+                    INSERT INTO comment (submission_time, answer_id, message)
+                    VALUES (%(submission_time)s, %(answer_id)s, %(message)s)
+                    """, {'submission_time': get_current_time(), 'answer_id': answer_id, 'message': message})
+
+
+@connection_handler
+def get_comments_by_question_id(cursor, question_id):
+    cursor.execute("""
+                    SELECT * FROM comment
+                    WHERE question_id=%(question_id)s
+                    """, {'question_id': question_id})
+    return cursor.fetchall()
+
+
+@connection_handler
+def get_comments_by_answer_id(cursor, answer_id):
+    cursor.execute("""
+                    SELECT * FROM comment
+                    WHERE answer_id=%(answer_id)s
+                    """, {'answer_id': answer_id})
+    return cursor.fetchall()
+
+
 if __name__ == '__main__':
-    print(get_question_by_id(1))
-
-
+    pass

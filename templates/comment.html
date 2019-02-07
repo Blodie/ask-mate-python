@@ -6,7 +6,6 @@
     <body>
         <h2>Add new Comment</h2>
         <form action="/question/{{id}}/new-comment" method="post">
-            <label for="comment-input">Your Comment</label>
             <textarea id="comment-input" name="comment" rows="12" cols="80" >{{comment}}</textarea>
             <button type="submit">Send Comment</button>
         </form>
