@@ -64,7 +64,7 @@ def edit_answer(answer_id):
     question_id = get_question_id_by_answer_id(answer_id)
     if request.method == "POST":
         update_answer(answer_id, request.form['msg'])
-        return redirect(f'/question/{question_id}')
+        return redirect(f'/question/{question_id}?inc=False')
     return render_template('answer.html', id=answer_id)
 
 
