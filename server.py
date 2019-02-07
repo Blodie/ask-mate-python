@@ -65,7 +65,7 @@ def edit_answer(answer_id):
     if request.method == "POST":
         update_answer(answer_id, request.form['msg'])
         return redirect(f'/question/{question_id}?inc=False')
-    return render_template('answer.html', id=answer_id)
+    return render_template('answer.html', id=answer_id, answer=answer)
 
 
 @app.route('/question/<question_id>/delete')
