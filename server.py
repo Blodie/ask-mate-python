@@ -92,7 +92,6 @@ def vote_on_question(question_id, vote):
 def vote_on_answer(answer_id, vote):
     vote = True if vote == "up" else False
     question_id = get_question_id_by_answer_id(answer_id)
-    get_question_id_by_answer_id(answer_id)
     vote_answer(answer_id, vote)
     return redirect(f'/question/{question_id}?inc=False')
 
@@ -112,6 +111,14 @@ def add_comment_to_answer(answer_id):
         new_comment_on_answer(answer_id, request.form['comment'])
         return redirect(f'/question/{question_id}?inc=False')
     return render_template('comment.html', id=question_id)
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    phrase = request.args['phrase']
+    questions = search_for_phrase(phrase)
+    necessary_headers = list(questions[0].keys())[1:-2] if questions else None
+    return render_template('index.html', questions=questions, headers=necessary_headers)
 
 
 if __name__ == "__main__":

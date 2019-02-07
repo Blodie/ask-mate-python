@@ -6,6 +6,7 @@ from util import *
 def get_questions(cursor):
     cursor.execute("""
                     SELECT * FROM question
+                    ORDER BY submission_time ASC;
                    """)
     questions = cursor.fetchall()
     return questions
@@ -16,6 +17,7 @@ def get_answers_by_q_id(cursor, id):
     cursor.execute("""
                     SELECT * FROM answer
                     WHERE question_id = %(id)s
+                    ORDER BY submission_time;
                    """, {'id': id})
     answers = cursor.fetchall()
     return answers
@@ -24,7 +26,7 @@ def get_answers_by_q_id(cursor, id):
 @connection_handler
 def get_question_by_id(cursor, id):
     cursor.execute("""
-                    SELECT * FROM question
+                    SELECT * FROM  question
                     WHERE id = %(id)s ;
                    """,
                    {'id': id})
@@ -65,22 +67,6 @@ def update_question(cursor, question_id, title, message, image=None):
 
 @connection_handler
 def del_question(cursor, question_id):
-    answer_ids = tuple([answer['id'] for answer in get_answers_by_q_id(question_id)])
-
-    if answer_ids:
-        cursor.execute("""
-                            DELETE FROM comment WHERE answer_id IN %(answer_ids)s
-                        """, {'answer_ids': answer_ids})
-        cursor.execute("""
-                            DELETE FROM answer WHERE id IN %(answer_ids)s                   
-                        """, {'answer_ids': answer_ids})
-
-    cursor.execute("""
-                        DELETE FROM comment WHERE question_id=%(question_id)s
-                    """, {'question_id': question_id})
-    cursor.execute("""
-                        DELETE FROM question_tag WHERE question_id=%(question_id)s
-                    """, {'question_id': question_id})
     cursor.execute("""
                         DELETE FROM question WHERE id=%(question_id)s                   
                     """, {'question_id': question_id})
@@ -107,9 +93,6 @@ def update_answer(cursor, answer_id, message, image=None):
 
 @connection_handler
 def del_answer(cursor, answer_id):
-    cursor.execute("""
-                        DELETE FROM comment WHERE answer_id=%(answer_id)s                   
-                    """, {'answer_id': answer_id})
     cursor.execute("""
                         DELETE FROM answer WHERE id=%(answer_id)s                   
                     """, {'answer_id': answer_id})
@@ -162,6 +145,7 @@ def get_comments_by_question_id(cursor, question_id):
     cursor.execute("""
                     SELECT * FROM comment
                     WHERE question_id=%(question_id)s
+                    ORDER BY submission_time ASC;
                     """, {'question_id': question_id})
     return cursor.fetchall()
 
@@ -171,9 +155,60 @@ def get_comments_by_answer_id(cursor, answer_id):
     cursor.execute("""
                     SELECT * FROM comment
                     WHERE answer_id=%(answer_id)s
+                    ORDER BY submission_time ASC;
                     """, {'answer_id': answer_id})
     return cursor.fetchall()
 
 
+@connection_handler
+def get_answer_by_answer_id(cursor, answer_id):
+    cursor.execute("""
+                    SELECT * FROM answer
+                    WHERE id=%(answer_id)s
+                    """, {'answer_id': answer_id})
+    return cursor.fetchall()[0]
+
+
+@connection_handler
+def search_for_phrase(cursor, phrase):
+    answer_ids = []
+    question_ids = []
+    answers = []
+    questions = []
+
+    cursor.execute("""
+                    SELECT * FROM comment
+                    WHERE LOWER(message) LIKE LOWER(%(phrase)s)
+                    """, {'phrase': '%'+phrase+'%'})
+    comments = cursor.fetchall()
+
+    if comments:
+        answer_ids += [comment['answer_id'] for comment in comments if comment['answer_id']]
+        question_ids += [comment['question_id'] for comment in comments if comment['question_id']]
+    if answer_ids:
+        answers += [get_answer_by_answer_id(answer_id) for answer_id in answer_ids]
+
+    cursor.execute("""
+                    SELECT * FROM answer
+                    WHERE LOWER(message) LIKE LOWER(%(phrase)s)
+                    """, {'phrase': '%'+phrase+'%'})
+    answers += cursor.fetchall()
+
+    if answers:
+        question_ids += [answer['question_id'] for answer in answers]
+    if question_ids:
+        questions += [get_question_by_id(question_id) for question_id in question_ids]
+
+    cursor.execute("""
+                    SELECT * FROM question
+                    WHERE LOWER(title) LIKE LOWER(%(phrase)s) OR LOWER(message) LIKE LOWER(%(phrase)s)
+                    """, {'phrase': '%'+phrase+'%'})
+    questions += cursor.fetchall()
+    questions = [question for i, question in enumerate(questions) if question not in questions[i + 1:]]
+
+    return questions
+
+
 if __name__ == '__main__':
-    pass
+    for question in search_for_phrase('fad'):
+        print(question)
