@@ -31,7 +31,7 @@
 
         <div class="card bg-light mb-3">
             <div class="card-header">
-                <h1>{{question["title"]}}</h1>
+                <h3>{{question["title"]}}</h3>
             </div>
             <div class="card-body">
                 <h6 class="card-title">
@@ -89,7 +89,7 @@
                 <div class="collapse" id="collapseExample">
                     <form action="/question/{{question['id']}}/new-comment" method="post">
                         <input name="comment" class="form-control input-sm" id="inputsm" type="text" maxlength="180">
-                        <button type="submit">Send</button>
+                        <button type="submit" class="btn btn-outline-success btn-sm">Send</button>
                     </form>
                 </div>
                 <br>
@@ -103,7 +103,7 @@
         </div>
         <br>
         <div class="card bg-light mb-3">
-            <div class="card-header">Answers</div>
+            <div class="card-header" style="font-size: 26px;">Answers</div>
             <div class="card-body">
                 {% if answers %}
                 {% for answer in answers %}
@@ -129,7 +129,7 @@
                 <div class="collapse" id="collapseExample{{ answer['id'] }}">
                     <form action="/answer/{{answer['id']}}/new-comment" method="post">
                         <input name="comment" class="form-control input-sm" id="inputsm" type="text" maxlength="180">
-                        <button type="submit">Send</button>
+                        <button type="submit" class="btn btn-outline-success btn-sm">Send</button>
                     </form>
                 </div>
                 <br>

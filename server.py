@@ -9,15 +9,17 @@ app = Flask(__name__)
 @app.route('/<list>')
 @app.route('/')
 def route_index(list=None):
+    order_by = request.args.get('order_by') if request.args.get('order_by') else "id"
+    direction = request.args.get('direction') if request.args.get('direction') else 'desc'
     if not list:
-        questions = get_questions(5)
+        questions = get_questions(order_by, direction, 5)
     else:
-        questions = get_questions()
+        questions = get_questions(order_by, direction)
 
     answer_numbers = {question['id']: len(get_answers_by_q_id(question['id'])) for question in questions}
     all_tags = get_tags()
     tags = {question['id']: get_tags_by_question_id(question['id']) for question in questions}
-    return render_template('index.html', questions=questions, answer_numbers=answer_numbers, tags=tags, all_tags=all_tags)
+    return render_template('index.html', questions=questions, answer_numbers=answer_numbers, tags=tags, all_tags=all_tags, direction=direction)
 
 
 @app.route('/question/<int:question_id>')
@@ -60,11 +62,12 @@ def answer(question_id):
 
 @app.route('/answer/<int:answer_id>/edit', methods=['GET', 'POST'])
 def edit_answer(answer_id):
+    answer = get_answer_by_answer_id(answer_id)
     question_id = get_question_id_by_answer_id(answer_id)
     if request.method == "POST":
         update_answer(answer_id, request.form['msg'])
-        return redirect(f'/question/{question_id}?inc=False')
-    return render_template('answer.html', id=answer_id, answer=answer)
+        return redirect(f'/question/{question_id}')
+    return render_template('answer.html', id=question_id, answer=answer)
 
 
 @app.route('/question/<question_id>/delete')

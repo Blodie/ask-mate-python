@@ -1,20 +1,21 @@
 from connection import connection_handler
+from psycopg2.extensions import AsIs
 from util import *
 
 
 @connection_handler
-def get_questions(cursor, limit=None):
+def get_questions(cursor, order_by, direction, limit=None):
     if not limit:
         cursor.execute("""
                         SELECT * FROM question
-                        ORDER BY submission_time DESC;
-                       """)
+                        ORDER BY %(order_by)s %(direction)s;
+                       """, {'order_by': AsIs(order_by), 'direction': AsIs(direction.upper())})
         questions = cursor.fetchall()
     else:
         cursor.execute("""
                         SELECT * FROM question 
-                        ORDER BY submission_time DESC LIMIT %(limit)s;
-                       """, {'limit': limit})
+                        ORDER BY %(order_by)s %(direction)s LIMIT %(limit)s;
+                       """, {'limit': limit, 'order_by': AsIs(order_by), 'direction': AsIs(direction.upper())})
         questions = cursor.fetchall()
 
     return questions
@@ -84,7 +85,7 @@ def del_question(cursor, question_id):
 def get_question_id_by_answer_id(cursor, answer_id):
     cursor.execute("""
                     SELECT * FROM answer
-                    WHERE id=%(id)s
+                    WHERE id=%(id)s LIMIT 1
                    """,
                    {'id': answer_id})
     return cursor.fetchall()[0]['question_id']
@@ -240,6 +241,7 @@ def get_tags_by_question_id(cursor, question_id):
 def get_tags(cursor):
     cursor.execute("""
                     SELECT * FROM tag
+                    ORDER BY name
                     """)
     return cursor.fetchall()
 
@@ -281,4 +283,4 @@ def delete_tag_from_question(cursor, tag_id, question_id):
 
 
 if __name__ == '__main__':
-    pass
+    print(get_question_id_by_answer_id(9))

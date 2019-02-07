@@ -32,6 +32,19 @@
 
     <p>
     {% if questions %}
+
+    <div class="dropdown">
+        <a class="btn btn-secondary dropdown-toggle" style="margin-left: 12px" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Order by
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="/list?order_by=vote_number&direction={{ 'asc' if direction=='desc' else 'desc' }}">Vote</a>
+            <a class="dropdown-item" href="/list?order_by=view_number&direction={{ 'asc' if direction=='desc' else 'desc' }}">View</a>
+            <a class="dropdown-item" href="/list?order_by=title&direction={{ 'asc' if direction=='desc' else 'desc' }}">Title</a>
+            <a class="dropdown-item" href="/list?order_by=submission_time&direction={{ 'asc' if direction=='desc' else 'desc' }}">Submission Time</a>
+        </div>
+    </div>
+
     <table class="table table-borderless table-hover">
         <tbody>
             {% for question in questions %}
