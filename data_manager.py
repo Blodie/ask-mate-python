@@ -97,6 +97,15 @@ def get_question_id_by_answer_id(cursor, answer_id):
 
 
 @connection_handler
+def update_answer(cursor, answer_id, message, image=None):
+    cursor.execute("""
+                    UPDATE answer SET message=%(message)s, image=%(image)s
+                    WHERE id=%(answer_id)s
+                   """,
+                   {'answer_id': answer_id, 'message': message, 'image': image})
+
+
+@connection_handler
 def del_answer(cursor, answer_id):
     cursor.execute("""
                         DELETE FROM comment WHERE answer_id=%(answer_id)s                   

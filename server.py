@@ -59,6 +59,15 @@ def answer(question_id):
     return render_template('answer.html', id=question_id)
 
 
+@app.route('/answer/<int:answer_id>/edit', methods=['GET', 'POST'])
+def edit_answer(answer_id):
+    question_id = get_question_id_by_answer_id(answer_id)
+    if request.method == "POST":
+        update_answer(answer_id, request.form['msg'])
+        return redirect(f'/question/{question_id}')
+    return render_template('answer.html', id=answer_id)
+
+
 @app.route('/question/<question_id>/delete')
 def delete_question(question_id):
     del_question(question_id)
