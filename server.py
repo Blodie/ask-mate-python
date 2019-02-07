@@ -6,33 +6,32 @@ app = Flask(__name__)
 #kill -9 $(lsof -i tcp:5000 -t)
 
 
-@app.route('/list')
-def list_all_questions():
-    questions = get_questions()
-    order_by = request.args.get('order_by') if request.args.get('order_by') else "id"
-    direction = True if request.args.get('order_direction') == 'desc' else False
-    necessary_headers = list(questions[0].keys())[1:-2] if questions else None
-    questions = sorted(questions, key=lambda x: x[order_by], reverse=direction)
-    return render_template('index.html', questions=questions, headers=necessary_headers, direction=direction)
-
-
+@app.route('/<list>')
 @app.route('/')
-def route_index():
-    questions = get_questions()[-1:-6:-1]
-    necessary_headers = list(questions[0].keys())[1:-2] if questions else None
-    return render_template('index.html', questions=questions, headers=necessary_headers)
+def route_index(list=None):
+    if not list:
+        questions = get_questions(5)
+    else:
+        questions = get_questions()
+
+    answer_numbers = {question['id']: len(get_answers_by_q_id(question['id'])) for question in questions}
+    all_tags = get_tags()
+    tags = {question['id']: get_tags_by_question_id(question['id']) for question in questions}
+    return render_template('index.html', questions=questions, answer_numbers=answer_numbers, tags=tags, all_tags=all_tags)
 
 
 @app.route('/question/<int:question_id>')
 def see_question(question_id):
     question = get_question_by_id(question_id)
     answers = get_answers_by_q_id(question_id)
+    tags = get_tags_by_question_id(question_id)
+    all_tags = get_tags()
     comments_for_question = get_comments_by_question_id(question_id)
     answer_ids = [answer['id'] for answer in answers]
     comments_for_answers = {answer_id: get_comments_by_answer_id(answer_id) for answer_id in answer_ids}
     if not request.args.get('inc'):
         pass
-    return render_template('question.html', question=question, answers=answers, comments_for_question=comments_for_question, comments_for_answers=comments_for_answers)
+    return render_template('question.html', all_tags=all_tags, tags=tags, question=question, answers=answers, comments_for_question=comments_for_question, comments_for_answers=comments_for_answers)
 
 
 @app.route('/add-question', methods=['GET', 'POST'])
@@ -92,7 +91,6 @@ def vote_on_question(question_id, vote):
 def vote_on_answer(answer_id, vote):
     vote = True if vote == "up" else False
     question_id = get_question_id_by_answer_id(answer_id)
-    get_question_id_by_answer_id(answer_id)
     vote_answer(answer_id, vote)
     return redirect(f'/question/{question_id}?inc=False')
 
@@ -112,6 +110,30 @@ def add_comment_to_answer(answer_id):
         new_comment_on_answer(answer_id, request.form['comment'])
         return redirect(f'/question/{question_id}?inc=False')
     return render_template('comment.html', id=question_id)
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    phrase = request.args['phrase']
+    questions = search_for_phrase(phrase)
+    answer_numbers = {question['id']: len(get_answers_by_q_id(question['id'])) for question in questions}
+    all_tags = get_tags()
+    tags = {question['id']: get_tags_by_question_id(question['id']) for question in questions}
+    return render_template('index.html', questions=questions, answer_numbers=answer_numbers, tags=tags, all_tags=all_tags)
+
+
+@app.route('/<question_page>/<int:question_id>/add-tag')
+@app.route('/<int:question_id>/add-tag')
+def add_tag_on_main_page(question_id, question_page=False):
+    add_tag_to_question(question_id, request.args['tag'])
+    return redirect('/') if not question_page else redirect(f'/question/{question_id}')
+
+
+@app.route('/<question_page>/<int:question_id>/delete-tag/<int:tag_id>')
+@app.route('/<int:question_id>/delete-tag/<int:tag_id>')
+def delete_tag(tag_id, question_id, question_page=False):
+    delete_tag_from_question(tag_id, question_id)
+    return redirect('/') if not question_page else redirect(f'/question/{question_id}')
 
 
 if __name__ == "__main__":
