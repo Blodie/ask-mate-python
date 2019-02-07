@@ -3,12 +3,20 @@ from util import *
 
 
 @connection_handler
-def get_questions(cursor):
-    cursor.execute("""
-                    SELECT * FROM question
-                    ORDER BY submission_time ASC;
-                   """)
-    questions = cursor.fetchall()
+def get_questions(cursor, limit=None):
+    if not limit:
+        cursor.execute("""
+                        SELECT * FROM question
+                        ORDER BY submission_time DESC;
+                       """)
+        questions = cursor.fetchall()
+    else:
+        cursor.execute("""
+                        SELECT * FROM question 
+                        ORDER BY submission_time DESC LIMIT %(limit)s;
+                       """, {'limit': limit})
+        questions = cursor.fetchall()
+
     return questions
 
 
@@ -209,6 +217,68 @@ def search_for_phrase(cursor, phrase):
     return questions
 
 
+@connection_handler
+def get_tags_by_question_id(cursor, question_id):
+    cursor.execute("""
+                    SELECT tag_id FROM question_tag
+                    WHERE question_id=%(question_id)s
+                    """, {'question_id': question_id})
+
+    tag_ids = [tag['tag_id'] for tag in cursor.fetchall()]
+
+    if tag_ids:
+        cursor.execute("""
+                        SELECT * FROM tag
+                        WHERE id IN %(tag_ids)s
+                        """, {'tag_ids': tuple(tag_ids)})
+        return cursor.fetchall()
+    else:
+        return []
+
+
+@connection_handler
+def get_tags(cursor):
+    cursor.execute("""
+                    SELECT * FROM tag
+                    """)
+    return cursor.fetchall()
+
+@connection_handler
+def add_tag_to_question(cursor, question_id, tag):
+    if not get_tag_id_by_name(tag):
+        cursor.execute("""
+                        INSERT INTO tag (name) 
+                        VALUES (%(tag_name)s)
+                        """, {'tag_name': tag})
+
+    cursor.execute("""
+                    SELECT * FROM question_tag
+                    WHERE tag_id=%(tag_id)s AND question_id=%(question_id)s
+                    """, {'tag_id': get_tag_id_by_name(tag), 'question_id': question_id})
+    question_has_tag = cursor.fetchall()
+    if not question_has_tag:
+        cursor.execute("""  
+                        INSERT INTO question_tag (question_id, tag_id) 
+                        VALUES (%(question_id)s, %(tag_id)s)
+                        """, {'question_id': question_id, 'tag_id': get_tag_id_by_name(tag)})
+
+
+@connection_handler
+def get_tag_id_by_name(cursor, tag):
+    cursor.execute("""
+                    SELECT * FROM tag
+                    WHERE name=%(tag)s
+                    """, {'tag': tag})
+    tag = cursor.fetchall()
+    return tag[0]['id'] if tag else None
+
+
+@connection_handler
+def delete_tag_from_question(cursor, tag_id, question_id):
+    cursor.execute("""
+                    DELETE FROM question_tag WHERE tag_id=%(id)s AND question_id=%(question_id)s
+                    """, {'id': tag_id, 'question_id': question_id})
+
+
 if __name__ == '__main__':
-    for question in search_for_phrase('fad'):
-        print(question)
+    pass
