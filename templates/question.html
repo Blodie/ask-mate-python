@@ -17,6 +17,9 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="/list">List all <span class="sr-only">(current)</span></a>
                 </li>
+                <li>
+                    <a class="nav-link" href="/register">Register <span class="sr-only">(current)</span></a>
+                </li>
             </ul>
         </div>
         <form class="form-inline" action="/search" method="get">
@@ -88,15 +91,20 @@
                 </p>
                 <div class="collapse" id="collapseExample">
                     <form action="/question/{{question['id']}}/new-comment" method="post">
-                        <input name="comment" class="form-control input-sm" id="inputsm" type="text" maxlength="180">
+                        <input name="comment" class="form-control input-sm" id="inputsm" type="text" maxlength="300">
                         <button type="submit" class="btn btn-outline-success btn-sm">Send</button>
                     </form>
                 </div>
                 <br>
                 <table class="table-striped table-borderless" width="100%">
                 {% for comment in comments_for_question %}
-                    <tr><td style="padding-left: 5%"><p style="margin-bottom: 2px">{{ comment['message'] }} </p>
-                                                     <p style="margin-bottom: 0px;font-size: 12px;font-style: italic;"> {{ comment['submission_time'] }} </p></td></tr>
+                    <tr><td style="padding-left: 5%"><div><p style="margin-bottom: 2px;float: left">{{ comment['message'] }} </p>
+                        <a href="/comment/{{ comment['id'] }}/delete" class="btn btn-dark btn-sm" style="float: right;padding-top: 0px;padding-right: 0px;padding-left: 0px;padding-bottom: 0px;border-left-width: 0px;border-top-width: 0px;border-right-width: 0px;border-bottom-width: 0px;height: 20px;width: 20px;">▬</a>
+                        </div>
+                        <p style="margin-bottom: 0px;font-size: 12px;font-style: italic;clear: both"> {{ comment['submission_time'] }} </p>
+
+                    </td></tr>
+
                 {% endfor %}
                 </table>
             </div>
@@ -128,15 +136,37 @@
                 </p>
                 <div class="collapse" id="collapseExample{{ answer['id'] }}">
                     <form action="/answer/{{answer['id']}}/new-comment" method="post">
-                        <input name="comment" class="form-control input-sm" id="inputsm" type="text" maxlength="180">
+                        <input name="comment" class="form-control input-sm" id="inputsm" type="text" maxlength="300">
                         <button type="submit" class="btn btn-outline-success btn-sm">Send</button>
                     </form>
                 </div>
                 <br>
-                <table class="table-striped table-borderless" width="100%">
+                <table class="table-striped table-bordered" width="100%">
                 {% for comment in comments_for_answers[answer["id"]] %}
-                    <tr><td style="padding-left: 5%"><p style="margin-bottom: 2px">{{ comment['message'] }} </p>
-                                                     <p style="margin-bottom: 0px;font-size: 12px;font-style: italic;"> {{ comment['submission_time'] }} </p></td></tr>
+                    <tr>
+                        <table class="table-secondary">
+                            <tr>
+                                <td style="padding-left: 5%;width: 99%"><p style="margin-bottom: 2px;">{{ comment['message'] }} </p></td>
+                                <td>
+                                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                                        <div class="btn-group-vertical mr-2" role="group" aria-label="First group">
+                                            <a href="/comment/{{ comment['id'] }}/edit" class="btn btn-info btn-sm" style="padding: 0px;border-width: 0px;height: 20px;width: 20px">✎</a>
+                                            <a href="/comment/{{ comment['id'] }}/delete" class="btn btn-dark btn-sm" style="padding: 0px;border-width: 0px;height: 20px;width: 20px;font-size: 10px">▬</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 5%">
+                                    <p style="margin-bottom: 0px;font-size: 12px;font-style: italic;"> {{ comment['submission_time'] }} </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </tr>
+
+                </table>
+
+                    </td></tr>
                 {% endfor %}
                 </table>
 

@@ -1,6 +1,7 @@
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request, session, url_for, escape
 from data_manager import *
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 #szar pycharm miatt ezt egyfolytában írogatnom kell a terminálba:
 #kill -9 $(lsof -i tcp:5000 -t)
@@ -9,6 +10,9 @@ app = Flask(__name__)
 @app.route('/<list>')
 @app.route('/')
 def route_index(list=None):
+    username = None
+    if 'username' in session:
+        username = escape(session['username'])
     order_by = request.args.get('order_by') if request.args.get('order_by') else "id"
     direction = request.args.get('direction') if request.args.get('direction') else 'desc'
     if not list:
@@ -19,7 +23,8 @@ def route_index(list=None):
     answer_numbers = {question['id']: len(get_answers_by_q_id(question['id'])) for question in questions}
     all_tags = get_tags()
     tags = {question['id']: get_tags_by_question_id(question['id']) for question in questions}
-    return render_template('index.html', questions=questions, answer_numbers=answer_numbers, tags=tags, all_tags=all_tags, direction=direction)
+    return render_template('index.html', questions=questions, answer_numbers=answer_numbers, tags=tags, all_tags=all_tags, direction=direction, username=username)
+
 
 
 @app.route('/question/<int:question_id>')
@@ -137,6 +142,42 @@ def add_tag_on_main_page(question_id, question_page=False):
 def delete_tag(tag_id, question_id, question_page=False):
     delete_tag_from_question(tag_id, question_id)
     return redirect('/') if not question_page else redirect(f'/question/{question_id}')
+
+
+@app.route('/comment/<comment_id>/delete')
+def delete_comment(comment_id):
+    question_id = get_question_id_by_comment_id(comment_id)
+    delete_comment_by_comment_id(comment_id)
+    return redirect(f'/question/{question_id}')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        new_user(request.form['username'], hash_password(request.form['pw']))
+        return redirect('/')
+    return render_template('register.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        if get_password_by_username(request.form['username']):
+            if verify_password(request.form['pw'], get_password_by_username(request.form['username'])):
+                session['username'] = request.form['username']
+                return redirect('/')
+        else:
+            wrong = True
+            return render_template('login.html', wrong=wrong)
+
+    return render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    # remove the username from the session if it's there
+    session.pop('username', None)
+    return redirect('/')
 
 
 if __name__ == "__main__":

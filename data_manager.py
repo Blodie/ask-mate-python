@@ -282,5 +282,48 @@ def delete_tag_from_question(cursor, tag_id, question_id):
                     """, {'id': tag_id, 'question_id': question_id})
 
 
+@connection_handler
+def get_question_id_by_comment_id(cursor, comment_id):
+    cursor.execute("""
+                    SELECT * FROM comment
+                    WHERE id=%(id)s
+                    """, {'id': comment_id})
+    comment = cursor.fetchall()[0]
+    if comment['question_id']:
+        return comment['question_id']
+    else:
+        question_id = get_question_id_by_answer_id(comment['answer_id'])
+        return question_id
+
+
+@connection_handler
+def delete_comment_by_comment_id(cursor, comment_id):
+    cursor.execute("""
+                    DELETE FROM comment
+                    WHERE id=%(id)s
+                    """, {'id': comment_id})
+
+
+@connection_handler
+def new_user(cursor, username, pw):
+    cursor.execute("""
+                      INSERT INTO user_data (name, pw)
+                      VALUES (%(username)s, %(pw)s)
+                    """,
+                   {'username': username, 'pw': pw})
+
+
+@connection_handler
+def get_password_by_username(cursor, username):
+    cursor.execute("""
+                    SELECT pw FROM user_data
+                    WHERE name = %(username)s
+                    """, {'username': username})
+    if cursor.fetchall():
+        return cursor.fetchall()[0]['pw']
+    else:
+        return None
+
+
 if __name__ == '__main__':
-    print(get_question_id_by_answer_id(9))
+    print(get_password_by_username('asd'))

@@ -5,7 +5,6 @@
     <title>List</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">#}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.css') }}">
 </head>
 
@@ -18,6 +17,12 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="/list">List all <span class="sr-only">(current)</span></a>
                 </li>
+                <li>
+                    <a class="nav-link" href="/register">Register <span class="sr-only">(current)</span></a>
+                </li>
+                <li>
+                    <a class="nav-link">{{ username }} <span class="sr-only">(current)</span></a>
+                </li>
             </ul>
         </div>
         <form class="form-inline" action="/search" method="get">
@@ -29,7 +34,6 @@
                                     transform: rotate(45deg);">&#9906;</div></button>
         </form>
     </nav>
-
     <p>
     {% if questions %}
 
@@ -94,6 +98,7 @@
     {% else %}
         <h6>No questions</h6>
     {% endif %}
+
     <a href="/add-question" class="btn btn-secondary btn">Ask question</a>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
