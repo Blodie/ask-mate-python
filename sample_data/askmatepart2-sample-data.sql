@@ -64,7 +64,6 @@ CREATE TABLE tag (
     name text
 );
 
-
 ALTER TABLE ONLY answer
     ADD CONSTRAINT pk_answer_id PRIMARY KEY (id);
 

@@ -1,20 +1,21 @@
 from connection import connection_handler
+from psycopg2.extensions import AsIs
 from util import *
 
 
 @connection_handler
-def get_questions(cursor, limit=None):
+def get_questions(cursor, order_by, direction, limit=None):
     if not limit:
         cursor.execute("""
                         SELECT * FROM question
-                        ORDER BY submission_time DESC;
-                       """)
+                        ORDER BY %(order_by)s %(direction)s;
+                       """, {'order_by': AsIs(order_by), 'direction': AsIs(direction.upper())})
         questions = cursor.fetchall()
     else:
         cursor.execute("""
                         SELECT * FROM question 
-                        ORDER BY submission_time DESC LIMIT %(limit)s;
-                       """, {'limit': limit})
+                        ORDER BY %(order_by)s %(direction)s LIMIT %(limit)s;
+                       """, {'limit': limit, 'order_by': AsIs(order_by), 'direction': AsIs(direction.upper())})
         questions = cursor.fetchall()
 
     return questions
@@ -281,4 +282,4 @@ def delete_tag_from_question(cursor, tag_id, question_id):
 
 
 if __name__ == '__main__':
-    print(get_question_id_by_comment_id(1))
+    pass

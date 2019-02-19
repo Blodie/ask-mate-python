@@ -9,12 +9,12 @@
 <body>
     {% if answer %}
         <h3> Edit answer:</h3>
-        <form action="/answer/{{ id }}/edit" method="post">
+        <form action="/answer/{{ answer['id'] }}/edit" method="post">
         <label>
-            <textarea name="msg" rows="8" cols="40" minlength="10"></textarea>
+            <textarea name="msg" rows="8" cols="40" minlength="10" >{{ answer['message'] }}</textarea>
         </label><br>
-            <input type="submit" value=Send style="float: left;">
-        <a href="/question/{{ id }}"><input type="button" value="Back" style="float: left;"></a>
+            <button type="submit" style="float: left;">Send</button>
+        <a href="/question/{{ id }}"><button>Back</button></a>
         </form>
 
     {% else %}
