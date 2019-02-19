@@ -10,18 +10,15 @@
 
 <body class="p-3 mb-2 bg-white text-black">
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light">
         <a class="navbar-brand" href="/">Home</a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
+            <ul class="navbar-nav">
+                <li>
                     <a class="nav-link" href="/list">List all <span class="sr-only">(current)</span></a>
                 </li>
                 <li>
                     <a class="nav-link" href="/register">Register <span class="sr-only">(current)</span></a>
-                </li>
-                <li>
-                    <a class="nav-link">{{ username }} <span class="sr-only">(current)</span></a>
                 </li>
             </ul>
         </div>
@@ -62,7 +59,7 @@
                 </td>
                 <td>
                     <div>
-                        <p style="margin-bottom: 2px"><a style="font-size: 20px" href="/question/{{ question['id'] }}?inc=True" class="text-secondary">{{ question['title'] }}</a></p>
+                        <p style="margin-bottom: 2px"><a style="font-size: 20px;" href="/question/{{ question['id'] }}?inc=True" class="text-secondary">{{ question['title'] }}</a></p>
                         {% for tag in tags[question['id']] %}
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button style="font-size: 14px" type="button" class="btn btn-outline-primary btn-sm">{{ tag['name'] }}</button>
