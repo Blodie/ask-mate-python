@@ -319,8 +319,9 @@ def get_password_by_username(cursor, username):
                     SELECT pw FROM user_data
                     WHERE name = %(username)s
                     """, {'username': username})
-    if cursor.fetchall():
-        return cursor.fetchall()[0]['pw']
+    username = cursor.fetchall()
+    if username:
+        return username[0]["pw"]
     else:
         return None
 
