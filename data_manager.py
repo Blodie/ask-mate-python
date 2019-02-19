@@ -325,5 +325,11 @@ def get_password_by_username(cursor, username):
         return None
 
 
+@connection_handler
+def list_all_users(cursor):
+    cursor.execute('''SELECT name, pw FROM user_data''')
+    return cursor.fetchall()
+
+
 if __name__ == '__main__':
-    print(get_password_by_username('asd'))
+    print(list_all_users())

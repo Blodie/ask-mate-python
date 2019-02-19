@@ -9,7 +9,7 @@ def get_connection_string():
     user_name = 'safi'
     password = 'chianti'
     host = 'localhost'
-    database_name = 'firstdatabase'
+    database_name = 'safi'
 
     env_variables_defined = user_name and password and host and database_name
 
