@@ -162,7 +162,7 @@ def vote_answer(cursor, answer_id, vote):
 @connection_handler
 def new_comment_on_question(cursor, question_id, message):
     if 'username' in session:
-        userid = get_id_by_username(session['username'])
+        userid = get_user_id_by_username(session['username'])
         cursor.execute("""
                         INSERT INTO comment (submission_time, question_id, message, user_id)
                         VALUES (%(submission_time)s, %(question_id)s, %(message)s, %(userid)s)
@@ -180,7 +180,7 @@ def new_comment_on_question(cursor, question_id, message):
 @connection_handler
 def new_comment_on_answer(cursor, answer_id, message):
     if 'username' in session:
-        userid = get_id_by_username(session['username'])
+        userid = get_user_id_by_username(session['username'])
         cursor.execute("""
                         INSERT INTO comment (submission_time, answer_id, message, user_id)
                         VALUES (%(submission_time)s, %(answer_id)s, %(message)s, %(userid)s)
@@ -351,12 +351,12 @@ def delete_comment_by_comment_id(cursor, comment_id):
 
 
 @connection_handler
-def new_user(cursor, username, pw):
+def new_user(cursor, username, pw, email):
     cursor.execute("""
-                      INSERT INTO user_data (name, pw)
-                      VALUES (%(username)s, %(pw)s)
+                      INSERT INTO user_data (name, pw, email)
+                      VALUES (%(username)s, %(pw)s, %(email)s)
                     """,
-                   {'username': username, 'pw': pw})
+                   {'username': username, 'pw': pw, 'email': email})
 
 
 @connection_handler
@@ -374,12 +374,11 @@ def get_password_by_username(cursor, username):
 
 @connection_handler
 def get_info_by_user_id(cursor, user_id):
-    user_info = {'id': user_id}
     cursor.execute("""
-                    SELECT name FROM user_data
+                    SELECT * FROM user_data
                     WHERE id = %(user_id)s
                     """, {'user_id': user_id})
-    user_info['name'] = cursor.fetchall()[0]['name']
+    user_info = cursor.fetchall()[0]
 
     cursor.execute("""
                     SELECT * FROM question
@@ -426,5 +425,13 @@ def list_all_users(cursor):
     return cursor.fetchall()
 
 
+@connection_handler
+def change_user_data(cursor, user_id, data):
+    cursor.execute("""
+                    UPDATE user_data SET %(attribute)s = %(value)s
+                    WHERE id=%(user_id)s
+                   """, {"attribute": AsIs(list(data.keys())[0]), "value": list(data.values())[0], "user_id": user_id})
+
+
 if __name__ == '__main__':
-    print(get_password_by_username('asd'))
+    print(get_info_by_user_id('1'))
