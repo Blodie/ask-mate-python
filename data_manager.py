@@ -1,6 +1,19 @@
 from connection import connection_handler
 from psycopg2.extensions import AsIs
 from util import *
+from flask import session
+
+
+@connection_handler
+def get_id_by_username(cursor):
+    if 'username' in session:
+        username = session['username']
+        cursor.execute("""
+                          SELECT id FROM user_data
+                          WHERE name = %(username)s  
+                        """, {'username': username})
+    userid = cursor.fetchall()
+    return userid[0]['id']
 
 
 @connection_handler
