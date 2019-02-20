@@ -352,8 +352,17 @@ def get_password_by_username(cursor, username):
                     SELECT pw FROM user_data
                     WHERE name = %(username)s
                     """, {'username': username})
-    username = cursor.fetchall()
-    if username:
-        return username[0]["pw"]
+    if cursor.fetchall():
+        return cursor.fetchall()[0]['pw']
     else:
         return None
+
+
+@connection_handler
+def list_all_users(cursor):
+    cursor.execute('''SELECT name, pw FROM user_data''')
+    return cursor.fetchall()
+
+
+if __name__ == '__main__':
+    print(list_all_users())

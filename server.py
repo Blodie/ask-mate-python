@@ -180,6 +180,12 @@ def logout():
     return redirect('/')
 
 
+@app.route('/registered-user')
+def list_users():
+    users = list_all_users()
+    return render_template('user.html', users=users)
+
+
 if __name__ == "__main__":
     app.run(
         debug=True,
