@@ -5,36 +5,107 @@
     <title>List</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.css') }}">
+{#    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.css') }}">     #}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+
 </head>
 
 <body class="p-3 mb-2 bg-white text-black">
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+    <a class="navbar-brand" href="/">Home</a>
+    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+        <ul class="navbar-nav mr-auto">
+            <li>
+                <a class="nav-link" href="/list" style="width: 75px">List all <span class="sr-only">(current)</span></a>
+            </li>
+            <li style="margin-left: 40px;">
+            <form class="form-inline" action="/search" method="get">
 
-    <nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light">
-        <a class="navbar-brand" href="/">Home</a>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav">
-                <li>
-                    <a class="nav-link" href="/list">List all <span class="sr-only">(current)</span></a>
-                </li>
-                <li>
-                    <a class="nav-link" href="/registered-user">All registered Users<span class="sr-only">(current)</span></a>
-                </li>
-                <li>
-                    <a class="nav-link" href="/register">Register <span class="sr-only">(current)</span></a>
-                </li>
-            </ul>
+                <input name="phrase" style="margin-right: 0px !important;width: 1050px;border-radius: 5px 0px 0px 5px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            </li>
+            <li>
+                <button class="btn btn-outline-success input-group-append" type="submit" style="border-radius: 0px 5px 5px 0px;">
+                    <div style="transform: rotate(45deg);">&#9906;</div>
+                </button>
+            </form>
+
+            </li>
+        </ul>
+    </div>
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                {% if not user %}
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#login">
+                      Sign in
+                    </button>
+                    {% else %}
+                        <div class="btn-group" style="text-align: right !important;justify-content: right !important;horiz-align: right !important;">
+                          <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              ≣
+                          </button>
+                          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="/profile/{{ user['id'] }}">My Profile</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/logout">Log Out</a>
+                          </div>
+                        </div>
+                    {% endif %}
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+    {% if not user %}
+    <div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="login">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="login">Sign {{ 'up' if signup else 'in' }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="{{ '/register' if signup else '/login' }}" autocomplete="off">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span style="width: 100px;" class="input-group-text" id="basic-addon1">Username</span>
+                  </div>
+                  <input type="text" class="form-control" name="username" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                </div>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span style="width: 100px;" class="input-group-text" id="basic-addon1">Password</span>
+                  </div>
+                    <input type="password" class="form-control" placeholder="Password" aria-label="Password" name="pw" aria-describedby="basic-addon1">
+                </div>
+                {% if not signup %}
+                <div class="checkbox">
+                  <label><input type="checkbox" value="">Remember me</label>
+                </div>
+                {% endif %}
+                    <button type="submit" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-off"></span> {{ 'Sign up' if signup else 'Log in' }}</button>
+                </form>
+                {% if failed_login %}
+                    <p style="color: red">Wrong username or password</p>
+                {% endif %}
+          </div>
+        {% if not signup %}
+          <div class="modal-footer justify-content-around">
+              <button type="submit" class="btn btn-danger btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+              <p style="display: inline-flex">Not a member?&nbsp; <a href="/register"> Sign Up</a></p>
+              <p style="display: inline-flex">Forgot&nbsp; <a href="#">Password?</a></p>
+          </div>
+        {% endif %}
         </div>
-        <form class="form-inline" action="/search" method="get">
-            <input name="phrase" style="margin-right: 0px" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-                <div style="-webkit-transform: rotate(45deg);
-                               -moz-transform: rotate(45deg);
-                                 -o-transform: rotate(45deg);
-                                    transform: rotate(45deg);">&#9906;</div></button>
-        </form>
-    </nav>
-    <p>
+      </div>
+    </div>
+    {% endif %}
+    
     {% if questions %}
 
     <div class="dropdown">
@@ -104,6 +175,14 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+    {% if failed_login or signup %}
+        <script type="text/javascript">
+            $(window).on('load',function(){
+                $('#login').modal('show');
+            });
+        </script>
+    {% endif %}
 
 </body>
 </html>

@@ -3,16 +3,22 @@ from data_manager import *
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
-#szar pycharm miatt ezt egyfolytában írogatnom kell a terminálba:
-#kill -9 $(lsof -i tcp:5000 -t)
+
+# kill -9 $(lsof -i tcp:5000 -t)
 
 
 @app.route('/<list>')
 @app.route('/')
 def route_index(list=None):
-    username = None
+    user = None
+    failed_login = False
+    signup = False
     if 'username' in session:
-        username = escape(session['username'])
+        user = get_info_by_user_id(get_user_id_by_username(escape(session['username'])))
+    if request.args.get('failed_login'):
+        failed_login = True
+    if request.args.get('signup'):
+        signup = True
     order_by = request.args.get('order_by') if request.args.get('order_by') else "id"
     direction = request.args.get('direction') if request.args.get('direction') else 'desc'
     if not list:
@@ -23,12 +29,20 @@ def route_index(list=None):
     answer_numbers = {question['id']: len(get_answers_by_q_id(question['id'])) for question in questions}
     all_tags = get_tags()
     tags = {question['id']: get_tags_by_question_id(question['id']) for question in questions}
-    return render_template('index.html', questions=questions, answer_numbers=answer_numbers, tags=tags, all_tags=all_tags, direction=direction, username=username)
-
+    return render_template('index.html', questions=questions, answer_numbers=answer_numbers, tags=tags, all_tags=all_tags, direction=direction, user=user, failed_login=failed_login, signup=signup)
 
 
 @app.route('/question/<int:question_id>')
 def see_question(question_id):
+    user = None
+    failed_login = False
+    signup = False
+    if 'username' in session:
+        user = get_info_by_user_id(get_user_id_by_username(escape(session['username'])))
+    if request.args.get('failed_login'):
+        failed_login = True
+    if request.args.get('signup'):
+        signup = True
     question = get_question_by_id(question_id)
     answers = get_answers_by_q_id(question_id)
     tags = get_tags_by_question_id(question_id)
@@ -36,9 +50,7 @@ def see_question(question_id):
     comments_for_question = get_comments_by_question_id(question_id)
     answer_ids = [answer['id'] for answer in answers]
     comments_for_answers = {answer_id: get_comments_by_answer_id(answer_id) for answer_id in answer_ids}
-    if not request.args.get('inc'):
-        pass
-    return render_template('question.html', all_tags=all_tags, tags=tags, question=question, answers=answers, comments_for_question=comments_for_question, comments_for_answers=comments_for_answers)
+    return render_template('question.html', all_tags=all_tags, tags=tags, question=question, answers=answers, comments_for_question=comments_for_question, comments_for_answers=comments_for_answers, user=user, failed_login=failed_login, signup=signup)
 
 
 @app.route('/add-question', methods=['GET', 'POST'])
@@ -132,7 +144,7 @@ def search():
 
 @app.route('/<question_page>/<int:question_id>/add-tag')
 @app.route('/<int:question_id>/add-tag')
-def add_tag_on_main_page(question_id, question_page=False):
+def add_tag(question_id, question_page=False):
     add_tag_to_question(question_id, request.args['tag'])
     return redirect('/') if not question_page else redirect(f'/question/{question_id}')
 
@@ -154,30 +166,34 @@ def delete_comment(comment_id):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        new_user(request.form['username'], hash_password(request.form['pw']))
-        return redirect('/')
-    return render_template('register.html')
+        if not username_exists(request.form.get('username')):
+            new_user(request.form['username'], hash_password(request.form['pw']))
+            return redirect('/')
+    return redirect('/?signup=1')
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        if get_password_by_username(request.form['username']):
-            if verify_password(request.form['pw'], get_password_by_username(request.form['username'])):
-                session['username'] = request.form['username']
-                return redirect('/')
-        else:
-            wrong = True
-            return render_template('login.html', wrong=wrong)
-
-    return render_template('login.html')
+@app.route('/<question_id>/login', methods=['POST'])
+@app.route('/login', methods=['POST'])
+def login(question_id=None):
+    if username_exists(request.form['username']):
+        if verify_password(request.form['pw'], get_password_by_username(request.form['username'])):
+            session['username'] = request.form['username']
+            return redirect(f'/question/{question_id}' if question_id else '/')
+    return redirect(f'/question/{question_id}?failed_login=1' if question_id else '/?failed_login=1')
 
 
 @app.route('/logout')
-def logout():
+@app.route('/<question_id>/logout')
+def logout(question_id=None):
     # remove the username from the session if it's there
     session.pop('username', None)
-    return redirect('/')
+    return redirect(f'/question/{question_id}' if question_id else '/')
+
+
+@app.route('/profile/<user_id>')
+def profile(user_id):
+    user = get_info_by_user_id(user_id)
+    return render_template("userpage.html", user=user)
 
 
 @app.route('/registered-user')

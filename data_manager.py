@@ -5,16 +5,6 @@ from flask import session
 
 
 @connection_handler
-def get_id_by_username(cursor, username):
-    cursor.execute("""
-                      SELECT id FROM user_data
-                      WHERE name = %(username)s  
-                    """, {'username': username})
-    userid = cursor.fetchall()
-    return userid[0]['id']
-
-
-@connection_handler
 def get_questions(cursor, order_by, direction, limit=None):
     if not limit:
         cursor.execute("""
@@ -57,7 +47,7 @@ def get_question_by_id(cursor, id):
 @connection_handler
 def new_question(cursor, title, message, image=None):
     if 'username' in session:
-        userid = get_id_by_username(session['username'])
+        userid = get_user_id_by_username(session['username'])
         cursor.execute("""
                             INSERT INTO question (submission_time, view_number, vote_number, title, message, image, user_id)
                             VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s, %(user_id)s)
@@ -83,7 +73,7 @@ def new_question(cursor, title, message, image=None):
 @connection_handler
 def new_answer(cursor, question_id, message, image=None):
     if 'username' in session:
-        userid = get_id_by_username(session['username'])
+        userid = get_user_id_by_username(session['username'])
         cursor.execute("""
                                 INSERT INTO answer (submission_time, vote_number, question_id, message, image, user_id)
                                 VALUES (%(submission_time)s, 0, %(question_id)s, %(message)s, %(image)s, %(userid)s)
@@ -360,10 +350,58 @@ def get_password_by_username(cursor, username):
 
 
 @connection_handler
+def get_info_by_user_id(cursor, user_id):
+    user_info = {'id': user_id}
+    cursor.execute("""
+                    SELECT name FROM user_data
+                    WHERE id = %(user_id)s
+                    """, {'user_id': user_id})
+    user_info['name'] = cursor.fetchall()[0]['name']
+
+    cursor.execute("""
+                    SELECT * FROM question
+                    WHERE user_id = %(id)s
+                    """, {'id': user_info['id']})
+    user_info['questions'] = cursor.fetchall()
+
+    cursor.execute("""
+                        SELECT * FROM answer
+                        WHERE user_id = %(id)s
+                        """, {'id': user_info['id']})
+    user_info['answers'] = cursor.fetchall()
+
+    cursor.execute("""
+                        SELECT * FROM comment
+                        WHERE user_id = %(id)s
+                        """, {'id': user_info['id']})
+    user_info['comments'] = cursor.fetchall()
+
+    return user_info
+
+
+@connection_handler
+def username_exists(cursor, username):
+    cursor.execute("""
+                    SELECT * FROM user_data
+                    WHERE name = %(username)s
+                    """, {'username': username})
+    return cursor.fetchall()
+
+
+@connection_handler
+def get_user_id_by_username(cursor, username):
+    cursor.execute("""
+                    SELECT id FROM user_data
+                    WHERE name = %(name)s
+                    """, {'name': username})
+    return cursor.fetchall()[0]['id']
+
+
+@connection_handler
 def list_all_users(cursor):
     cursor.execute('''SELECT name, pw FROM user_data''')
     return cursor.fetchall()
 
 
 if __name__ == '__main__':
-    print(list_all_users())
+    print(get_password_by_username('asd'))
