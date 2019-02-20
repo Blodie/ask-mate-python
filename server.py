@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, request, session, url_for, escape
 from data_manager import *
+
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
@@ -29,7 +30,8 @@ def route_index(list=None):
     answer_numbers = {question['id']: len(get_answers_by_q_id(question['id'])) for question in questions}
     all_tags = get_tags()
     tags = {question['id']: get_tags_by_question_id(question['id']) for question in questions}
-    return render_template('index.html', questions=questions, answer_numbers=answer_numbers, tags=tags, all_tags=all_tags, direction=direction, user=user, failed_login=failed_login, signup=signup)
+    return render_template('index.html', questions=questions, answer_numbers=answer_numbers, tags=tags,
+                           all_tags=all_tags, direction=direction, user=user, failed_login=failed_login, signup=signup)
 
 
 @app.route('/question/<int:question_id>')
@@ -50,7 +52,9 @@ def see_question(question_id):
     comments_for_question = get_comments_by_question_id(question_id)
     answer_ids = [answer['id'] for answer in answers]
     comments_for_answers = {answer_id: get_comments_by_answer_id(answer_id) for answer_id in answer_ids}
-    return render_template('question.html', all_tags=all_tags, tags=tags, question=question, answers=answers, comments_for_question=comments_for_question, comments_for_answers=comments_for_answers, user=user, failed_login=failed_login, signup=signup)
+    return render_template('question.html', all_tags=all_tags, tags=tags, question=question, answers=answers,
+                           comments_for_question=comments_for_question, comments_for_answers=comments_for_answers,
+                           user=user, failed_login=failed_login, signup=signup)
 
 
 @app.route('/add-question', methods=['GET', 'POST'])
@@ -139,7 +143,8 @@ def search():
     answer_numbers = {question['id']: len(get_answers_by_q_id(question['id'])) for question in questions}
     all_tags = get_tags()
     tags = {question['id']: get_tags_by_question_id(question['id']) for question in questions}
-    return render_template('index.html', questions=questions, answer_numbers=answer_numbers, tags=tags, all_tags=all_tags)
+    return render_template('index.html', questions=questions, answer_numbers=answer_numbers, tags=tags,
+                           all_tags=all_tags)
 
 
 @app.route('/<question_page>/<int:question_id>/add-tag')

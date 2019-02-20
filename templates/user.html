@@ -8,15 +8,16 @@
 <body>
 <h2 align="center">Everything you want to know about registered users</h2>
 <div>
-  <table border="10px">
-  <th align="center">UserName</th><th align="center">Hashed Password</th>
-{% for user in users %}
-<TR>
-   <TD>{{user.name}}</TD>
-   <TD >{{user.pw}}</TD>
-</TR>
-{% endfor %}
-</table>
+    <table border="10px">
+        <th align="center">UserName</th>
+        <th align="center">Hashed Password</th>
+        {% for user in users %}
+            <TR>
+                <TD>{{ user.name }}</TD>
+                <TD>{{ user.pw }}</TD>
+            </TR>
+        {% endfor %}
+    </table>
 </div>
 </body>
 </html>

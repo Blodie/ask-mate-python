@@ -17,19 +17,18 @@
             <li>
                 <a class="nav-link" href="/list" style="width: 75px">List all <span class="sr-only">(current)</span></a>
             </li>
-            <li style="margin-left: 40px;">
-                <form class="form-inline" action="/search" method="get">
-
+            <form class="form-inline" action="/search" method="get">
+                <li style="margin-left: 40px;">
                     <input name="phrase"
                            style="margin-right: 0px !important;width: 1050px;border-radius: 5px 0px 0px 5px;"
                            class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            </li>
-            <li>
-                <button class="btn btn-outline-success input-group-append" type="submit"
-                        style="border-radius: 0px 5px 5px 0px;">
-                    <div style="transform: rotate(45deg);">&#9906;</div>
-                </button>
-                </form>
+                </li>
+                <li>
+                    <button class="btn btn-outline-success input-group-append" type="submit"
+                            style="border-radius: 0px 5px 5px 0px;">
+                        <div style="transform: rotate(45deg);">&#9906;</div>
+                    </button>
+            </form>
 
             </li>
         </ul>
@@ -153,8 +152,10 @@
                             {% endif %}
                         </div>
                     </div>
+                </td>
+            </table>
         </h6>
-        </td>
+
         <td>
             <h4 class="card-text">{{ question["message"] }}</h4>
 

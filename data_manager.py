@@ -80,6 +80,7 @@ def new_answer(cursor, question_id, message, image=None):
                    {'submission_time': get_current_time(), 'question_id': question_id, 'message': message,
                     'image': image, 'userid': userid})
 
+
 @connection_handler
 def update_question(cursor, question_id, title, message, image=None):
     cursor.execute("""

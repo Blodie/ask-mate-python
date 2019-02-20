@@ -7,26 +7,28 @@
 </head>
 
 <body>
-    {% if answer %}
-        <h3> Edit answer:</h3>
-        <form action="/answer/{{ answer['id'] }}/edit" method="post">
+{% if answer %}
+    <h3> Edit answer:</h3>
+    <form action="/answer/{{ answer['id'] }}/edit" method="post">
         <label>
-            <textarea name="msg" rows="8" cols="40" minlength="10" >{{ answer['message'] }}</textarea>
+            <textarea name="msg" rows="8" cols="40" minlength="10">{{ answer['message'] }}</textarea>
         </label><br>
-            <button type="submit" style="float: left;">Send</button>
-        <a href="/question/{{ id }}"><button>Back</button></a>
-        </form>
+        <button type="submit" style="float: left;">Send</button>
+        <a href="/question/{{ id }}">
+            <button>Back</button>
+        </a>
+    </form>
 
-    {% else %}
-        <h3> New answer:</h3>
-        <form action="/question/{{ id }}/new-answer" method="post">
+{% else %}
+    <h3> New answer:</h3>
+    <form action="/question/{{ id }}/new-answer" method="post">
         <label>
             <textarea name="msg" rows="8" cols="40" minlength="10"></textarea>
         </label><br>
-            <input type="submit" value=Send style="float: left;">
+        <input type="submit" value=Send style="float: left;">
         <a href="/question/{{ id }}"><input type="button" value="Back" style="float: left;"></a>
-        </form>
-    {% endif %}
+    </form>
+{% endif %}
 
 </body>
 </html>
