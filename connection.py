@@ -6,10 +6,10 @@ import os
 def get_connection_string():
     # setup connection string
     # to do this, please define these environment variables first
-    user_name = 'safi'
-    password = 'chianti'
-    host = 'localhost'
-    database_name = 'safi'
+    user_name = os.environ.get('PSQL_USER_NAME')
+    password = os.environ.get('PSQL_PASSWORD')
+    host = ('PSQL_HOST')
+    database_name = ('PSQL_DB_NAME')
 
     env_variables_defined = user_name and password and host and database_name
 
