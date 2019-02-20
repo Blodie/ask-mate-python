@@ -62,7 +62,7 @@ def new_question(cursor, title, message, image=None):
                             INSERT INTO question (submission_time, view_number, vote_number, title, message, image, user_id)
                             VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s, %(user_id)s)
                        """,
-                       {'submission_time': get_current_time(), 'title': title, 'message': message, 'image': image, 'user_id':userid})
+                       {'submission_time': get_current_time(), 'title': title, 'message': message, 'image': image, 'user_id': userid})
         cursor.execute("""
                             SELECT * FROM question ORDER BY id DESC LIMIT 1
                        """)
@@ -82,11 +82,20 @@ def new_question(cursor, title, message, image=None):
 
 @connection_handler
 def new_answer(cursor, question_id, message, image=None):
-    cursor.execute("""
-                    INSERT INTO answer (submission_time, vote_number, question_id, message, image)
-                    VALUES (%(submission_time)s, 0, %(question_id)s, %(message)s, %(image)s)
-                   """,
-                   {'submission_time': get_current_time(), 'question_id': question_id, 'message': message, 'image': image})
+    if 'username' in session:
+        userid = get_id_by_username(session['username'])
+        cursor.execute("""
+                                INSERT INTO answer (submission_time, vote_number, question_id, message, image, user_id)
+                                VALUES (%(submission_time)s, 0, %(question_id)s, %(message)s, %(image)s, %(userid)s)
+                               """,
+                       {'submission_time': get_current_time(), 'question_id': question_id, 'message': message,
+                        'image': image, 'userid': userid})
+    else:
+        cursor.execute("""
+                        INSERT INTO answer (submission_time, vote_number, question_id, message, image)
+                        VALUES (%(submission_time)s, 0, %(question_id)s, %(message)s, %(image)s)
+                       """,
+                       {'submission_time': get_current_time(), 'question_id': question_id, 'message': message, 'image': image})
 
 
 @connection_handler
