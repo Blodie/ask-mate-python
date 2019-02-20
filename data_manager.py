@@ -52,7 +52,8 @@ def new_question(cursor, title, message, image=None):
                             INSERT INTO question (submission_time, view_number, vote_number, title, message, image, user_id)
                             VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s, %(user_id)s)
                        """,
-                       {'submission_time': get_current_time(), 'title': title, 'message': message, 'image': image, 'user_id': userid})
+                       {'submission_time': get_current_time(), 'title': title, 'message': message, 'image': image,
+                        'user_id': userid})
         cursor.execute("""
                             SELECT * FROM question ORDER BY id DESC LIMIT 1
                        """)
@@ -85,7 +86,8 @@ def new_answer(cursor, question_id, message, image=None):
                         INSERT INTO answer (submission_time, vote_number, question_id, message, image)
                         VALUES (%(submission_time)s, 0, %(question_id)s, %(message)s, %(image)s)
                        """,
-                       {'submission_time': get_current_time(), 'question_id': question_id, 'message': message, 'image': image})
+                       {'submission_time': get_current_time(), 'question_id': question_id, 'message': message,
+                        'image': image})
 
 
 @connection_handler
@@ -140,7 +142,8 @@ def vote_question(cursor, question_id, vote):
                     UPDATE question SET vote_number=%(vote)s
                     WHERE id=%(question_id)s
                    """,
-                   {'vote': (question_vote_number+1) if vote else (question_vote_number-1), 'question_id':question_id})
+                   {'vote': (question_vote_number + 1) if vote else (question_vote_number - 1),
+                    'question_id': question_id})
 
 
 @connection_handler
@@ -153,23 +156,42 @@ def vote_answer(cursor, answer_id, vote):
                     UPDATE answer SET vote_number=%(vote)s
                     WHERE id=%(answer_id)s
                    """,
-                   {'vote': (answer_vote_number+1) if vote else (answer_vote_number-1), 'answer_id': answer_id})
+                   {'vote': (answer_vote_number + 1) if vote else (answer_vote_number - 1), 'answer_id': answer_id})
 
 
 @connection_handler
 def new_comment_on_question(cursor, question_id, message):
-    cursor.execute("""
-                    INSERT INTO comment (submission_time, question_id, message)
-                    VALUES (%(submission_time)s, %(question_id)s, %(message)s)
-                    """, {'submission_time': get_current_time(), 'question_id': question_id, 'message': message})
+    if 'username' in session:
+        userid = get_id_by_username(session['username'])
+        cursor.execute("""
+                        INSERT INTO comment (submission_time, question_id, message, user_id)
+                        VALUES (%(submission_time)s, %(question_id)s, %(message)s, %(userid)s)
+                        """,
+                       {'submission_time': get_current_time(), 'question_id': question_id, 'message': message,
+                        'userid': userid})
+    else:
+        cursor.execute("""
+                                INSERT INTO comment (submission_time, question_id, message)
+                                VALUES (%(submission_time)s, %(question_id)s, %(message)s)
+                                """,
+                       {'submission_time': get_current_time(), 'question_id': question_id, 'message': message})
 
 
 @connection_handler
 def new_comment_on_answer(cursor, answer_id, message):
-    cursor.execute("""
-                    INSERT INTO comment (submission_time, answer_id, message)
-                    VALUES (%(submission_time)s, %(answer_id)s, %(message)s)
-                    """, {'submission_time': get_current_time(), 'answer_id': answer_id, 'message': message})
+    if 'username' in session:
+        userid = get_id_by_username(session['username'])
+        cursor.execute("""
+                        INSERT INTO comment (submission_time, answer_id, message, user_id)
+                        VALUES (%(submission_time)s, %(answer_id)s, %(message)s, %(userid)s)
+                        """, {'submission_time': get_current_time(), 'answer_id': answer_id, 'message': message,
+                              'userid': userid})
+    else:
+        cursor.execute("""
+                                INSERT INTO comment (submission_time, answer_id, message)
+                                VALUES (%(submission_time)s, %(answer_id)s, %(message)s)
+                                """,
+                       {'submission_time': get_current_time(), 'answer_id': answer_id, 'message': message})
 
 
 @connection_handler
@@ -211,7 +233,7 @@ def search_for_phrase(cursor, phrase):
     cursor.execute("""
                     SELECT * FROM comment
                     WHERE LOWER(message) LIKE LOWER(%(phrase)s)
-                    """, {'phrase': '%'+phrase+'%'})
+                    """, {'phrase': '%' + phrase + '%'})
     comments = cursor.fetchall()
 
     if comments:
@@ -223,7 +245,7 @@ def search_for_phrase(cursor, phrase):
     cursor.execute("""
                     SELECT * FROM answer
                     WHERE LOWER(message) LIKE LOWER(%(phrase)s)
-                    """, {'phrase': '%'+phrase+'%'})
+                    """, {'phrase': '%' + phrase + '%'})
     answers += cursor.fetchall()
 
     if answers:
@@ -234,7 +256,7 @@ def search_for_phrase(cursor, phrase):
     cursor.execute("""
                     SELECT * FROM question
                     WHERE LOWER(title) LIKE LOWER(%(phrase)s) OR LOWER(message) LIKE LOWER(%(phrase)s)
-                    """, {'phrase': '%'+phrase+'%'})
+                    """, {'phrase': '%' + phrase + '%'})
     questions += cursor.fetchall()
     questions = [question for i, question in enumerate(questions) if question not in questions[i + 1:]]
 
@@ -267,6 +289,7 @@ def get_tags(cursor):
                     ORDER BY name
                     """)
     return cursor.fetchall()
+
 
 @connection_handler
 def add_tag_to_question(cursor, question_id, tag):
