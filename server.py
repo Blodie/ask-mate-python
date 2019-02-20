@@ -178,6 +178,7 @@ def login(question_id=None):
     if username_exists(request.form['username']):
         if verify_password(request.form['pw'], get_password_by_username(request.form['username'])):
             session['username'] = request.form['username']
+            session['logged_in'] = True
             return redirect(f'/question/{question_id}' if question_id else '/')
     return redirect(f'/question/{question_id}?failed_login=1' if question_id else '/?failed_login=1')
 
@@ -187,6 +188,7 @@ def login(question_id=None):
 def logout(question_id=None):
     # remove the username from the session if it's there
     session.pop('username', None)
+    session['logged_in'] = False
     return redirect(f'/question/{question_id}' if question_id else '/')
 
 

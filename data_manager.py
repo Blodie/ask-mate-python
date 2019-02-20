@@ -5,6 +5,16 @@ from flask import session
 
 
 @connection_handler
+def get_id_by_username(cursor, username):
+    cursor.execute("""
+                      SELECT id FROM user_data
+                      WHERE name = %(username)s  
+                    """, {'username': username})
+    userid = cursor.fetchall()[0]['id']
+    return userid
+
+
+@connection_handler
 def get_questions(cursor, order_by, direction, limit=None):
     if not limit:
         cursor.execute("""
@@ -46,49 +56,29 @@ def get_question_by_id(cursor, id):
 
 @connection_handler
 def new_question(cursor, title, message, image=None):
-    if 'username' in session:
-        userid = get_user_id_by_username(session['username'])
-        cursor.execute("""
-                            INSERT INTO question (submission_time, view_number, vote_number, title, message, image, user_id)
-                            VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s, %(user_id)s)
-                       """,
-                       {'submission_time': get_current_time(), 'title': title, 'message': message, 'image': image,
-                        'user_id': userid})
-        cursor.execute("""
-                            SELECT * FROM question ORDER BY id DESC LIMIT 1
-                       """)
-        new_question = cursor.fetchall()[0]
-        return new_question
-    else:
-        cursor.execute("""
-                            INSERT INTO question (submission_time, view_number, vote_number, title, message, image)
-                            VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s)
-                           """,
-                       {'submission_time': get_current_time(), 'title': title, 'message': message, 'image': image})
-        cursor.execute("""
-                            SELECT * FROM question ORDER BY id DESC LIMIT 1
-                           """)
-        return cursor.fetchall()[0]
+    userid = get_user_id_by_username(session['username'])
+    cursor.execute("""
+                        INSERT INTO question (submission_time, view_number, vote_number, title, message, image, user_id)
+                        VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s, %(user_id)s)
+                   """,
+                   {'submission_time': get_current_time(), 'title': title, 'message': message, 'image': image,
+                    'user_id': userid})
+    cursor.execute("""
+                        SELECT * FROM question ORDER BY id DESC LIMIT 1
+                   """)
+    new_question = cursor.fetchall()[0]
+    return new_question
 
 
 @connection_handler
 def new_answer(cursor, question_id, message, image=None):
-    if 'username' in session:
-        userid = get_user_id_by_username(session['username'])
-        cursor.execute("""
-                                INSERT INTO answer (submission_time, vote_number, question_id, message, image, user_id)
-                                VALUES (%(submission_time)s, 0, %(question_id)s, %(message)s, %(image)s, %(userid)s)
-                               """,
-                       {'submission_time': get_current_time(), 'question_id': question_id, 'message': message,
-                        'image': image, 'userid': userid})
-    else:
-        cursor.execute("""
-                        INSERT INTO answer (submission_time, vote_number, question_id, message, image)
-                        VALUES (%(submission_time)s, 0, %(question_id)s, %(message)s, %(image)s)
-                       """,
-                       {'submission_time': get_current_time(), 'question_id': question_id, 'message': message,
-                        'image': image})
-
+    userid = get_user_id_by_username(session['username'])
+    cursor.execute("""
+                            INSERT INTO answer (submission_time, vote_number, question_id, message, image, user_id)
+                            VALUES (%(submission_time)s, 0, %(question_id)s, %(message)s, %(image)s, %(userid)s)
+                           """,
+                   {'submission_time': get_current_time(), 'question_id': question_id, 'message': message,
+                    'image': image, 'userid': userid})
 
 @connection_handler
 def update_question(cursor, question_id, title, message, image=None):
@@ -161,37 +151,23 @@ def vote_answer(cursor, answer_id, vote):
 
 @connection_handler
 def new_comment_on_question(cursor, question_id, message):
-    if 'username' in session:
-        userid = get_id_by_username(session['username'])
-        cursor.execute("""
-                        INSERT INTO comment (submission_time, question_id, message, user_id)
-                        VALUES (%(submission_time)s, %(question_id)s, %(message)s, %(userid)s)
-                        """,
-                       {'submission_time': get_current_time(), 'question_id': question_id, 'message': message,
-                        'userid': userid})
-    else:
-        cursor.execute("""
-                                INSERT INTO comment (submission_time, question_id, message)
-                                VALUES (%(submission_time)s, %(question_id)s, %(message)s)
-                                """,
-                       {'submission_time': get_current_time(), 'question_id': question_id, 'message': message})
+    userid = get_id_by_username(session['username'])
+    cursor.execute("""
+                    INSERT INTO comment (submission_time, question_id, message, user_id)
+                    VALUES (%(submission_time)s, %(question_id)s, %(message)s, %(userid)s)
+                    """,
+                   {'submission_time': get_current_time(), 'question_id': question_id, 'message': message,
+                    'userid': userid})
 
 
 @connection_handler
 def new_comment_on_answer(cursor, answer_id, message):
-    if 'username' in session:
-        userid = get_id_by_username(session['username'])
-        cursor.execute("""
-                        INSERT INTO comment (submission_time, answer_id, message, user_id)
-                        VALUES (%(submission_time)s, %(answer_id)s, %(message)s, %(userid)s)
-                        """, {'submission_time': get_current_time(), 'answer_id': answer_id, 'message': message,
-                              'userid': userid})
-    else:
-        cursor.execute("""
-                                INSERT INTO comment (submission_time, answer_id, message)
-                                VALUES (%(submission_time)s, %(answer_id)s, %(message)s)
-                                """,
-                       {'submission_time': get_current_time(), 'answer_id': answer_id, 'message': message})
+    userid = get_id_by_username(session['username'])
+    cursor.execute("""
+                    INSERT INTO comment (submission_time, answer_id, message, user_id)
+                    VALUES (%(submission_time)s, %(answer_id)s, %(message)s, %(userid)s)
+                    """, {'submission_time': get_current_time(), 'answer_id': answer_id, 'message': message,
+                          'userid': userid})
 
 
 @connection_handler
