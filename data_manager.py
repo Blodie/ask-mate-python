@@ -58,15 +58,29 @@ def get_question_by_id(cursor, id):
 
 @connection_handler
 def new_question(cursor, title, message, image=None):
-    cursor.execute("""
-                    INSERT INTO question (submission_time, view_number, vote_number, title, message, image)
-                    VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s)
-                   """,
-                   {'submission_time': get_current_time(), 'title': title, 'message': message, 'image': image})
-    cursor.execute("""
-                    SELECT * FROM question ORDER BY id DESC LIMIT 1
-                   """)
-    return cursor.fetchall()[0]
+    if 'username' in session:
+        userid = get_id_by_username(session['username'])
+        cursor.execute("""
+                        INSERT INTO question (submission_time, view_number, vote_number, title, message, image, user_id)
+                        VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s, %(user_id)s)
+                       """,
+                       {'submission_time': get_current_time(), 'title': title, 'message': message, 'image': image, 'user_id':userid})
+        cursor.execute("""
+                        SELECT * FROM question ORDER BY id DESC LIMIT 1
+                       """)
+        new_question_temp = cursor.fetchall()[0]
+        return cursor.fetchall()[0]
+    else:
+        cursor.execute("""
+                                INSERT INTO question (submission_time, view_number, vote_number, title, message, image)
+                                VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s)
+                               """,
+                       {'submission_time': get_current_time(), 'title': title, 'message': message, 'image': image})
+        cursor.execute("""
+                                SELECT * FROM question ORDER BY id DESC LIMIT 1
+                               """)
+        new_question_temp = cursor.fetchall()[0]
+        return cursor.fetchall()[0]
 
 
 @connection_handler
@@ -337,7 +351,3 @@ def get_password_by_username(cursor, username):
         return username[0]["pw"]
     else:
         return None
-
-
-if __name__ == '__main__':
-    print(get_password_by_username('asd'))

@@ -165,7 +165,6 @@ def login():
         if get_password_by_username(request.form['username']):
             if verify_password(request.form['pw'], get_password_by_username(request.form['username'])):
                 session['username'] = request.form['username']
-                session['userid'] = get_id_by_username()
                 return redirect('/')
         else:
             wrong = True
