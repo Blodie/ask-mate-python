@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ user['name'] }}</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    </head>
+    <body>
+        {% include 'navbar.html' %}
+        <div class="row">
+            <div class="col-auto">
+                <div class="list-group" id="list-tab" role="tablist">
+                    <a class="list-group-item list-group-item-action btn-outline-success active" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Profile</a>
+                    <a class="list-group-item list-group-item-action btn-outline-success" id="list-activity-list" data-toggle="list" href="#list-activity" role="tab" aria-controls="activity">Activity</a>
+                    <a class="list-group-item list-group-item-action btn-outline-success" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Messages</a>
+                    <a class="list-group-item list-group-item-action btn-outline-success" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">Settings</a>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="tab-content" id="nav-tabContent">
+
+
+                    <div class="tab-pane fade show active" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+                        <div class="input-group mb-3" style="width: 600px">
+                            <div class="input-group-prepend" style="width: 100px !important;">
+                                <span class="input-group-text" style="width: 100px !important;" id="inputGroup-sizing-default">Username</span>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Default" readonly aria-describedby="inputGroup-sizing-default" value="{{ user['name'] }}">
+                        </div>
+                        <div class="input-group mb-3" style="width: 600px">
+                            <div class="input-group-prepend" style="width: 100px !important;">
+                                <span class="input-group-text" id="inputGroup-sizing-default" style="width: 100px !important;">E-mail</span>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Default" readonly aria-describedby="inputGroup-sizing-default" value="{{ user['email'] }}">
+                        </div>
+                        <form method="post" class="input-group mb-3" action="/profile/edit-first_name" style="width: 600px">
+                            <div class="input-group-prepend" style="width: 100px !important;">
+                                <span class="input-group-text" style="width: 100px !important;" id="inputGroup-sizing-default">First name</span>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" name="first_name" value="{{ user['first_name'] if user['first_name']}}">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-outline-success"  onclick="changeSuccessful()">change</button>
+                            </div>
+                        </form>
+                        <form method="post" class="input-group mb-3" action="/profile/edit-last_name" style="width: 600px">
+                            <div class="input-group-prepend" style="width: 100px !important;">
+                                <span class="input-group-text" style="width: 100px !important;" id="inputGroup-sizing-default">Last name</span>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default" name="last_name" value="{{ user['last_name'] if user['last_name'] }}">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-outline-success"  onclick="changeSuccessful()">change</button>
+                            </div>
+                        </form>
+                        <form method="post" class="input-group mb-3" action="/profile/edit-name_tag" style="width: 600px">
+                            <div class="input-group-prepend" style="width: 100px !important;">
+                                <span class="input-group-text" style="width: 100px !important;" id="inputGroup-sizing-default">Name tag</span>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default" name="name_tag" value="{{ user['name_tag'] if user['name_tag'] }}">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-outline-success"  onclick="changeSuccessful()">change</button>
+                            </div>
+                        </form>
+                        <form method="post" class="input-group mb-3" action="/profile/edit-phone_number" style="width: 600px">
+                            <div class="input-group-prepend" style="width: 100px !important;">
+                                <span class="input-group-text" style="width: 100px !important;" id="inputGroup-sizing-default">Phone</span>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Default"  aria-describedby="inputGroup-sizing-default" name="phone_number" value="{{ user['phone_number'] if user['phone_number'] }}">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-outline-success"  onclick="changeSuccessful()">change</button>
+                            </div>
+                        </form>
+                    </div>
+
+
+                    <div class="tab-pane fade" id="list-activity" role="tabpanel" aria-labelledby="list-activity-list" style="width: 1200px;">
+                        <nav>
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                <a class="nav-item nav-link active text-success" id="nav-question-tab" data-toggle="tab" href="#nav-question" role="tab" aria-controls="nav-question" aria-selected="true">Questions</a>
+                                <a class="nav-item nav-link text-success" id="nav-answer-tab" data-toggle="tab" href="#nav-answer" role="tab" aria-controls="nav-answer" aria-selected="false">Answers</a>
+                                <a class="nav-item nav-link text-success" id="nav-comment-tab" data-toggle="tab" href="#nav-comment" role="tab" aria-controls="nav-comment" aria-selected="false">Comments</a>
+                            </div>
+                        </nav>
+                        <div class="tab-content" id="nav-tabContent">
+
+                            {% if user['questions'] %}
+                            <div class="tab-pane fade show active" id="nav-question" role="tabpanel" aria-labelledby="nav-question-tab">
+                                <table class="table table-borderless table-hover" style="margin-top: 30px">
+                                    <tbody>
+                                        {% for question in user['questions'] %}
+                                        <tr>
+                                            <td style="width: 150px">
+                                                <div class="btn-group" role="group" aria-label="Basic example">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm">{{ question['vote_number'] }} <br> votes</button>
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm">{{ answer_numbers[question['id']] }} <br> answers</button>
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm">{{ question['view_number'] }} <br> views</button>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <p style="margin-bottom: 2px"><a style="font-size: 20px;" href="/question/{{ question['id'] }}" class="text-secondary">{{ question['title'] }}</a></p>
+                                                    {% for tag in tags[question['id']] %}
+                                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                                        <button style="font-size: 14px" type="button" class="btn btn-outline-primary btn-sm">{{ tag['name'] }}</button>
+                                                    </div>
+                                                    {% endfor %}
+                                                    <p style="text-align: right;font-size: 12px;font-style: italic;margin-bottom: 0px">{{question["submission_time"]}}</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                {% else %}
+                                <h6>No questions</h6>
+                                {% endif %}
+                            </div>
+
+
+                            <div class="tab-pane fade" id="nav-answer" role="tabpanel" aria-labelledby="nav-answer-tab">
+
+                            </div>
+
+
+                            <div class="tab-pane fade" id="nav-comment" role="tabpanel" aria-labelledby="nav-comment-tab">...</div>
+                        </div>
+                    </div>
+
+
+                    <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
+                    </div>
+                    <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+        {% if failed_login or signup %}
+        <script type="text/javascript">
+            $(window).on('load',function(){
+                $('#login').modal('show');
+            });
+        </script>
+        {% endif %}
+        <script>
+            function changeSuccessful() {
+              alert("Change Successful");
+            }
+        </script>
+    </body>
+</html>

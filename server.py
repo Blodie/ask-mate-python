@@ -15,7 +15,7 @@ def route_index(list=None):
     failed_login = False
     signup = False
     if 'username' in session:
-        user = get_info_by_user_id(get_user_id_by_username(escape(session['username'])))
+        user = get_info_by_user_id(get_id_by_username(escape(session['username'])))
     if request.args.get('failed_login'):
         failed_login = True
     if request.args.get('signup'):
@@ -40,7 +40,7 @@ def see_question(question_id):
     failed_login = False
     signup = False
     if 'username' in session:
-        user = get_info_by_user_id(get_user_id_by_username(escape(session['username'])))
+        user = get_info_by_user_id(get_id_by_username(escape(session['username'])))
     if request.args.get('failed_login'):
         failed_login = True
     if request.args.get('signup'):
@@ -138,13 +138,21 @@ def add_comment_to_answer(answer_id):
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
+    user = None
+    failed_login = False
+    signup = False
+    if 'username' in session:
+        user = get_info_by_user_id(get_id_by_username(escape(session['username'])))
+    if request.args.get('failed_login'):
+        failed_login = True
+    if request.args.get('signup'):
+        signup = True
     phrase = request.args['phrase']
     questions = search_for_phrase(phrase)
     answer_numbers = {question['id']: len(get_answers_by_q_id(question['id'])) for question in questions}
     all_tags = get_tags()
     tags = {question['id']: get_tags_by_question_id(question['id']) for question in questions}
-    return render_template('index.html', questions=questions, answer_numbers=answer_numbers, tags=tags,
-                           all_tags=all_tags)
+    return render_template('index.html', user=user, failed_login=failed_login, signup=signup, questions=questions, answer_numbers=answer_numbers, tags=tags, all_tags=all_tags)
 
 
 @app.route('/<question_page>/<int:question_id>/add-tag')
@@ -168,13 +176,14 @@ def delete_comment(comment_id):
     return redirect(f'/question/{question_id}')
 
 
+@app.route('/<question_id>/register', methods=['GET', 'POST'])
 @app.route('/register', methods=['GET', 'POST'])
-def register():
+def register(question_id=None):
     if request.method == 'POST':
         if not username_exists(request.form.get('username')):
-            new_user(request.form['username'], hash_password(request.form['pw']))
-            return redirect('/')
-    return redirect('/?signup=1')
+            new_user(request.form['username'], hash_password(request.form['pw']), request.form['email'])
+            return redirect(f'/question/{question_id}' if question_id else '/')
+    return redirect(f'/question/{question_id}?signup=1' if question_id else '/?signup=1')
 
 
 @app.route('/<question_id>/login', methods=['POST'])
@@ -183,7 +192,6 @@ def login(question_id=None):
     if username_exists(request.form['username']):
         if verify_password(request.form['pw'], get_password_by_username(request.form['username'])):
             session['username'] = request.form['username']
-            session['logged_in'] = True
             return redirect(f'/question/{question_id}' if question_id else '/')
     return redirect(f'/question/{question_id}?failed_login=1' if question_id else '/?failed_login=1')
 
@@ -193,20 +201,36 @@ def login(question_id=None):
 def logout(question_id=None):
     # remove the username from the session if it's there
     session.pop('username', None)
-    session['logged_in'] = False
     return redirect(f'/question/{question_id}' if question_id else '/')
 
 
-@app.route('/profile/<user_id>')
-def profile(user_id):
-    user = get_info_by_user_id(user_id)
-    return render_template("userpage.html", user=user)
+@app.route('/profile')
+def profile():
+    if 'username' in session:
+        user = get_info_by_user_id(get_id_by_username(session['username']))
+        answer_numbers = {question['id']: len(get_answers_by_q_id(question['id'])) for question in user['questions']}
+        tags = {question['id']: get_tags_by_question_id(question['id']) for question in user['questions']}
+
+        return render_template("userpage.html", user=user, answer_numbers=answer_numbers, tags=tags)
+    else:
+        return 'Fuck off'
 
 
 @app.route('/registered-user')
 def list_users():
     users = list_all_users()
     return render_template('user.html', users=users)
+
+
+@app.route('/profile/edit-<attribute>', methods=['POST'])
+def edit_user_data(attribute):
+    if 'username' in session:
+        data = {attribute: request.form.get(attribute)}
+        userid = get_id_by_username(session['username'])
+        change_user_data(userid, data)
+        return redirect('/profile')
+    else:
+        return 'Fuck off'
 
 
 if __name__ == "__main__":
