@@ -5,13 +5,11 @@ from flask import session
 
 
 @connection_handler
-def get_id_by_username(cursor):
-    if 'username' in session:
-        username = session['username']
-        cursor.execute("""
-                          SELECT id FROM user_data
-                          WHERE name = %(username)s  
-                        """, {'username': username})
+def get_id_by_username(cursor, username):
+    cursor.execute("""
+                      SELECT id FROM user_data
+                      WHERE name = %(username)s  
+                    """, {'username': username})
     userid = cursor.fetchall()
     return userid[0]['id']
 
@@ -61,25 +59,24 @@ def new_question(cursor, title, message, image=None):
     if 'username' in session:
         userid = get_id_by_username(session['username'])
         cursor.execute("""
-                        INSERT INTO question (submission_time, view_number, vote_number, title, message, image, user_id)
-                        VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s, %(user_id)s)
+                            INSERT INTO question (submission_time, view_number, vote_number, title, message, image, user_id)
+                            VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s, %(user_id)s)
                        """,
                        {'submission_time': get_current_time(), 'title': title, 'message': message, 'image': image, 'user_id':userid})
         cursor.execute("""
-                        SELECT * FROM question ORDER BY id DESC LIMIT 1
+                            SELECT * FROM question ORDER BY id DESC LIMIT 1
                        """)
-        new_question_temp = cursor.fetchall()[0]
-        return cursor.fetchall()[0]
+        new_question = cursor.fetchall()[0]
+        return new_question
     else:
         cursor.execute("""
-                                INSERT INTO question (submission_time, view_number, vote_number, title, message, image)
-                                VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s)
-                               """,
+                            INSERT INTO question (submission_time, view_number, vote_number, title, message, image)
+                            VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s)
+                           """,
                        {'submission_time': get_current_time(), 'title': title, 'message': message, 'image': image})
         cursor.execute("""
-                                SELECT * FROM question ORDER BY id DESC LIMIT 1
-                               """)
-        new_question_temp = cursor.fetchall()[0]
+                            SELECT * FROM question ORDER BY id DESC LIMIT 1
+                           """)
         return cursor.fetchall()[0]
 
 
