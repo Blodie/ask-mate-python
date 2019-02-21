@@ -430,4 +430,4 @@ def change_user_data(cursor, user_id, data):
 
 
 if __name__ == '__main__':
-    print(get_password_by_username('asd'))
+    print(list_all_users())

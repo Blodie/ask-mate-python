@@ -9,12 +9,12 @@
 <h2 align="center">Everything you want to know about registered users</h2>
 <div>
     <table border="10px">
-        {% for header  in users.keys() %}
+        {% for header  in users[0].keys() %}
             <th align="center">{{ header }}</th>
             {% endfor %}
     {% for user in users %}
             <TR>{%  for value in user %}
-                <TD>{{ value}}</TD>
+                <TD>{{ user.get(value)}}</TD>
                 {% endfor %}
             </TR>
         {% endfor %}
