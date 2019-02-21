@@ -229,6 +229,16 @@ def edit_user_data(attribute):
         return 'Fuck off'
 
 
+@app.route("/accept-answer/<int:answer_id>", methods=['POST'])
+def accept_answer(answer_id):
+    if 'username' in session and get_id_by_username(session['username']) == get_question_by_id(get_question_id_by_answer_id(answer_id))['user_id']:
+        set_accept_answer(answer_id)
+        question_id = get_question_id_by_answer_id(answer_id)
+        return redirect(f'/question/{question_id}')
+    else:
+        return 'Fuck Off'
+
+
 if __name__ == "__main__":
     app.run(
         debug=True,
