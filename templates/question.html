@@ -33,9 +33,12 @@
                             {% for tag in tags %}
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button style="font-size: 14px" type="button" class="btn btn-outline-primary btn-sm">{{ tag['name'] }}</button>
+                                {% if question in user['questions'] %}
                                 <a href="/question/{{ question['id'] }}/delete-tag/{{ tag['id'] }}" style="font-size: 8px;vertical-align: middle" class="btn btn-outline-dark btn-sm">▬</a>
+                                {% endif %}
                             </div>
                             {% endfor %}
+                            {% if question in user['questions'] %}
                             <div style="display: inline-block" class="dropdown">
                                 <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 +
@@ -52,6 +55,7 @@
                                     {% endfor %}
                                 </div>
                             </div>
+                            {% endif %}
                         </div>
                     </td>
                 </table>
@@ -68,15 +72,21 @@
                     </form>
                 </div>
                 <br>
-                <table class="table-striped table-borderless" width="100%">
-                    {% for comment in comments_for_question %}
+                <table class="table-striped table-bordered" width="100%">
+                {% for comment in comments_for_question %}
                     <tr>
-                        <td style="padding-left: 5%">
-                            <div>
-                                <p style="margin-bottom: 2px;float: left">{{ comment['message'] }} </p>
-                                <a href="/comment/{{ comment['id'] }}/delete" class="btn btn-dark btn-sm" style="float: right;padding-top: 0px;padding-right: 0px;padding-left: 0px;padding-bottom: 0px;border-left-width: 0px;border-top-width: 0px;border-right-width: 0px;border-bottom-width: 0px;height: 20px;width: 20px;">▬</a>
+                        <td style="padding-left: 5%;width: 99%">
+                            <p style="margin-bottom: 2px;">{{ comment['message'] }} </p>
+                            <p style="margin-bottom: 0px;font-size: 12px;font-style: italic;"> {{ comment['submission_time'] }} </p>
+
+                        </td>
+                        <td>
+                            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                                <div class="btn-group-vertical mr-2" role="group" aria-label="First group">
+                                    <a href="/comment/{{ comment['id'] }}/edit" class="btn btn-info btn-sm" style="padding: 0px;border-width: 0px;height: 20px;width: 20px">✎</a>
+                                    <a href="/comment/{{ comment['id'] }}/delete" class="btn btn-dark btn-sm" style="padding: 0px;border-width: 0px;height: 20px;width: 20px;font-size: 10px">▬</a>
+                                </div>
                             </div>
-                            <p style="margin-bottom: 0px;font-size: 12px;font-style: italic;clear: both"> {{ comment['submission_time'] }} </p>
                         </td>
                     </tr>
                     {% endfor %}
@@ -137,35 +147,26 @@
                         </form>
                     </div>
                     <br>
-                    <table class="table-striped table-bordered" width="100%">
+                    </p>
+                    <table class="table-striped table-borderless" width="100%">
                         {% for comment in comments_for_answers[answer["id"]] %}
                         <tr>
-                            <table class="table-secondary">
-                                <tr>
-                                    <td style="padding-left: 5%;width: 99%">
-                                        <p style="margin-bottom: 2px;">{{ comment['message'] }} </p>
-                                    </td>
-                                    <td>
-                                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                                            <div class="btn-group-vertical mr-2" role="group" aria-label="First group">
-                                                <a href="/comment/{{ comment['id'] }}/edit" class="btn btn-info btn-sm" style="padding: 0px;border-width: 0px;height: 20px;width: 20px">✎</a>
-                                                <a href="/comment/{{ comment['id'] }}/delete" class="btn btn-dark btn-sm" style="padding: 0px;border-width: 0px;height: 20px;width: 20px;font-size: 10px">▬</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="padding-left: 5%">
-                                        <p style="margin-bottom: 0px;font-size: 12px;font-style: italic;"> {{ comment['submission_time'] }} </p>
-                                    </td>
-                                </tr>
-                            </table>
+                            <td style="padding-left: 5%;width: 99%">
+                                <p style="margin-bottom: 2px;">{{ comment['message'] }} </p>
+                                <p style="margin-bottom: 0px;font-size: 12px;font-style: italic;"> {{ comment['submission_time'] }} </p>
+
+                            </td>
+                            <td>
+                                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                                    <div class="btn-group-vertical mr-2" role="group" aria-label="First group">
+                                        <a href="/comment/{{ comment['id'] }}/edit" class="btn btn-info btn-sm" style="padding: 0px;border-width: 0px;height: 20px;width: 20px">✎</a>
+                                        <a href="/comment/{{ comment['id'] }}/delete" class="btn btn-dark btn-sm" style="padding: 0px;border-width: 0px;height: 20px;width: 20px;font-size: 10px">▬</a>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
-                    </table>
-                    </td></tr>
                     {% endfor %}
                     </table>
-                    </p>
                 </div>
                 {% endfor %}
                 {% else %}
