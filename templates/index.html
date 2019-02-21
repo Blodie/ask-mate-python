@@ -40,25 +40,8 @@
                             {% for tag in tags[question['id']] %}
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button style="font-size: 14px" type="button" class="btn btn-outline-primary btn-sm">{{ tag['name'] }}</button>
-                                <a href="/{{ question['id'] }}/delete-tag/{{ tag['id'] }}" style="font-size: 8px;vertical-align: middle" class="btn btn-outline-dark btn-sm">▬</a>
                             </div>
                             {% endfor %}
-                            <div style="display: inline-block" class="dropdown">
-                                <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                +
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                    <span class="input-group">
-                                        <form action="/{{ question['id'] }}/add-tag" method="get">
-                                            <input name="tag" style="width: 120px  " type="text">
-                                            <button class="btn btn-outline-success btn-sm" type="submit">+</button>
-                                        </form>
-                                    </span>
-                                    {% for tag in all_tags %}
-                                    <a href="/{{ question['id'] }}/add-tag?tag={{ tag['name'] }}" class="dropdown-item">{{ tag['name'] }}</a>
-                                    {% endfor %}
-                                </div>
-                            </div>
                             <p style="text-align: right;font-size: 12px;font-style: italic;margin-bottom: 0px">{{question["submission_time"]}}</p>
                         </div>
                     </td>

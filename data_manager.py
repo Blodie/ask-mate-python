@@ -387,18 +387,46 @@ def get_info_by_user_id(cursor, user_id):
     user_info['questions'] = cursor.fetchall()
 
     cursor.execute("""
-                        SELECT * FROM answer
-                        WHERE user_id = %(id)s
+                        SELECT answer.* FROM answer
+                        WHERE answer.user_id = %(id)s
                         """, {'id': user_info['id']})
     user_info['answers'] = cursor.fetchall()
+
+    for i, answer in enumerate(user_info['answers']):
+        cursor.execute("""
+                        SELECT * FROM question
+                        WHERE %(question_id)s = question.id
+                        """, {'question_id': answer['question_id']})
+        user_info['answers'][i]['question'] = cursor.fetchall()[0]
+        user_info['answers'][i]['question']['answer_numbers'] = get_answer_numbers_by_question_id(user_info['answers'][i]['question_id'])
+        user_info['answers'][i]['question']['tags'] = get_tags_by_question_id(user_info['answers'][i]['question_id'])
 
     cursor.execute("""
                         SELECT * FROM comment
                         WHERE user_id = %(id)s
                         """, {'id': user_info['id']})
     user_info['comments'] = cursor.fetchall()
+    for i, comment in enumerate(user_info['comments']):
+        if comment.get('question_id'):
+            user_info['comments'][i]['question'] = get_question_by_id(comment['question_id'])
+        else:
+            user_info['comments'][i]['answer'] = get_answer_by_answer_id(comment['answer_id'])
+            user_info['comments'][i]['question'] = get_question_by_id(comment['answer']['question_id'])
+
+        user_info['comments'][i]['question']['answer_numbers'] = get_answer_numbers_by_question_id(user_info['comments'][i]['question']['id'])
+        user_info['comments'][i]['question']['tags'] = get_tags_by_question_id(user_info['comments'][i]['question']['id'])
+
 
     return user_info
+
+
+@connection_handler
+def get_answer_numbers_by_question_id(cursor, question_id):
+    cursor.execute("""
+                    SELECT COUNT(*) AS "answer_numbers" FROM answer
+                    WHERE question_id = %(question_id)s                        
+                    """, {'question_id': question_id})
+    return cursor.fetchall()[0]['answer_numbers']
 
 
 @connection_handler

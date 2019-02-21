@@ -82,8 +82,8 @@
                         </nav>
                         <div class="tab-content" id="nav-tabContent">
 
-                            {% if user['questions'] %}
                             <div class="tab-pane fade show active" id="nav-question" role="tabpanel" aria-labelledby="nav-question-tab">
+                            {% if user['questions'] %}
                                 <table class="table table-borderless table-hover" style="margin-top: 30px">
                                     <tbody>
                                         {% for question in user['questions'] %}
@@ -117,13 +117,103 @@
 
 
                             <div class="tab-pane fade" id="nav-answer" role="tabpanel" aria-labelledby="nav-answer-tab">
-
+                                {% if user['answers'] %}
+                                    <table class="table table-borderless table-hover" style="margin-top: 30px">
+                                        <tbody>
+                                            {% for answer in user['answers'] %}
+                                            <tr>
+                                                <td style="width: 150px">
+                                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm">{{ answer['question']['vote_number'] }} <br> votes</button>
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm">{{ answer['question']['answer_numbers'] }} <br> answers</button>
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm">{{ answer['question']['view_number'] }} <br> views</button>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <p style="margin-bottom: 2px"><a style="font-size: 20px;" href="/question/{{ answer['question_id'] }}" class="text-secondary">{{ answer['question']['title'] }}</a></p>
+                                                        {% for tag in answer['question']['tags'] %}
+                                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                                            <button style="font-size: 14px" type="button" class="btn btn-outline-primary btn-sm">{{ tag['name'] }}</button>
+                                                        </div>
+                                                        {% endfor %}
+                                                        <p style="text-align: right;font-size: 12px;font-style: italic;margin-bottom: 0px">{{answer['question']['submission_time']}}</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-success" style="background-color: #f9f9f9;">
+                                                    <p style="margin-left: 20%">Your answer: </p>
+                                                </td>
+                                                <td style="background-color: #f9f9f9;">
+                                                    <p style="font-size: 14px;margin: 0px;margin-left: 10%">{{answer["message"]}}</p>
+                                                    <p style="font-size: 10px;font-style: italic;margin: 0px;margin-left: 10%">{{answer["submission_time"]}}</p>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    {% else %}
+                                    <h6>No anwers</h6>
+                                    {% endif %}
                             </div>
 
 
-                            <div class="tab-pane fade" id="nav-comment" role="tabpanel" aria-labelledby="nav-comment-tab">...</div>
+                            <div class="tab-pane fade" id="nav-comment" role="tabpanel" aria-labelledby="nav-comment-tab">
+                                {% if user['comments'] %}
+                                    <table class="table table-borderless table-hover" style="margin-top: 30px">
+                                        <tbody>
+                                            {% for comment in user['comments'] %}
+                                            <tr>
+                                                <td style="width: 150px">
+                                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm">{{ comment['question']['vote_number'] }} <br> votes</button>
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm">{{ comment['question']['answer_numbers'] }} <br> answers</button>
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm">{{ comment['question']['view_number'] }} <br> views</button>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <p style="margin-bottom: 2px"><a style="font-size: 20px;" href="/question/{{ comment['question']['id'] }}" class="text-secondary">{{ comment['question']['title'] }}</a></p>
+                                                        {% for tag in comment['question']['tags'] %}
+                                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                                            <button style="font-size: 14px" type="button" class="btn btn-outline-primary btn-sm">{{ tag['name'] }}</button>
+                                                        </div>
+                                                        {% endfor %}
+                                                        <p style="text-align: right;font-size: 12px;font-style: italic;margin-bottom: 0px">{{comment['question']['submission_time']}}</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% if comment['answer'] %}
+                                            <tr>
+                                                <td class="text-secondary">
+                                                    <p>Answer: </p>
+                                                </td>
+                                                <td class="text-secondary">
+                                                    <p style="font-size: 16px;margin: 0px;margin-left: 5%">{{comment['answer']["message"]}}</p>
+                                                    <p style="font-size: 12px;font-style: italic;margin: 0px;margin-left: 5%">{{comment['answer']["submission_time"]}}</p>
+                                                </td>
+                                            </tr>
+                                            {% endif %}
+                                            <tr>
+                                                <td class="text-success" style="background-color: #f9f9f9;">
+                                                    <p style="margin-left: 20%">Your comment:</p>
+                                                </td>
+                                                <td style="background-color: #f9f9f9;">
+                                                    <p style="font-size: 14px;margin: 0px;margin-left: 10%">{{comment["message"]}}</p>
+                                                    <p style="font-size: 10px;font-style: italic;margin: 0px;margin-left: 10%">{{comment["submission_time"]}}</p>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% else %}
+                                <h6>No comments</h6>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
+
 
 
                     <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
@@ -137,11 +227,6 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
         {% if failed_login or signup %}
-        <script type="text/javascript">
-            $(window).on('load',function(){
-                $('#login').modal('show');
-            });
-        </script>
         {% endif %}
         <script>
             function changeSuccessful() {
