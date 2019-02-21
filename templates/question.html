@@ -91,7 +91,7 @@
                     </form>
                 </div>
                 <br>
-                <table class="table-striped table-bordered" width="100%">
+                <table class="table-striped table-borderless" width="100%">
                 {% for comment in comments_for_question %}
                     <tr>
                         <td style="padding-left: 5%;width: 99%">
@@ -99,16 +99,16 @@
                             <p style="margin-bottom: 0px;font-size: 12px;font-style: italic;"> {{ comment['submission_time'] }} </p>
 
                         </td>
-                        {% if 'username' in session and user['id'] == comment['user_id'] %}
                         <td>
+                        {% if 'username' in session and user['id'] == comment['user_id'] %}
                             <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                                 <div class="btn-group-vertical mr-2" role="group" aria-label="First group">
                                     <a href="/comment/{{ comment['id'] }}/edit" class="btn btn-info btn-sm" style="padding: 0px;border-width: 0px;height: 20px;width: 20px">✎</a>
                                     <a href="/comment/{{ comment['id'] }}/delete" class="btn btn-dark btn-sm" style="padding: 0px;border-width: 0px;height: 20px;width: 20px;font-size: 10px">▬</a>
                                 </div>
                             </div>
-                        </td>
                         {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </table>
@@ -181,16 +181,16 @@
                                 <p style="margin-bottom: 0px;font-size: 12px;font-style: italic;"> {{ comment['submission_time'] }} </p>
 
                             </td>
-                            {% if 'username' in session and user['id'] == comment['user_id'] %}
                             <td>
+                            {% if 'username' in session and user['id'] == comment['user_id'] %}
                                 <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                                     <div class="btn-group-vertical mr-2" role="group" aria-label="First group">
                                         <a href="/comment/{{ comment['id'] }}/edit" class="btn btn-info btn-sm" style="padding: 0px;border-width: 0px;height: 20px;width: 20px">✎</a>
                                         <a href="/comment/{{ comment['id'] }}/delete" class="btn btn-dark btn-sm" style="padding: 0px;border-width: 0px;height: 20px;width: 20px;font-size: 10px">▬</a>
                                     </div>
                                 </div>
-                            </td>
                             {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                     </table>
