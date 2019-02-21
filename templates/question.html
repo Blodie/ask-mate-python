@@ -135,9 +135,9 @@
                                     <a href="/answer/{{ answer['id'] }}/vote-up" class="btn btn-success btn-sm">►</a>
                                     {% if 'username' in session and user['id'] == question['user_id'] %}
                                         {%  if answer['accepted'] == True %}
-                                            <form action= "/accept-answer/{{ answer['id']}}" method="post"> <button type="submit">✔</button></form>
+                                            <form action= "/accept-answer/{{ answer['id']}}" method="post"> <button type="submit" class="btn btn-sm btn-warning">✔</button></form>
                                          {% else %}
-                                            <form action= "/accept-answer/{{ answer['id']}}" method="post"> <button type="submit">☐</button></form>
+                                            <form action= "/accept-answer/{{ answer['id']}}" method="post"> <button type="submit" class="btn btn-sm btn-warning">☐</button></form>
                                         {% endif %}
                                     {% endif %}
                                 {% else %}
@@ -204,12 +204,38 @@
         </div>
         <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
             {% if 'username' in session %}
-                <div class="btn-group mr-2" role="group" aria-label="First group">
-                    <a href="/question/{{question['id']}}/new-answer" class="btn btn-info btn">Answer</a>
+
+
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#post_answer">Answer</button>
+
+
+            <div class="modal fade" id="post_answer" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">New Answer</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/question/{{ question.id }}/new-answer" method="post">
+                                <div class="form-group">
+                                    <label for="exampleFormControlTextarea1">Message</label>
+                                    <textarea required minlength="10" maxlength="400" name="msg" class="form-control" id="exampleFormControlTextarea1" rows="5" placeholder="Message"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-success btn-block">
+                                    Post Answer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
             {% else %}
                 <button type="button" class="btn btn-info" data-toggle="modal"
-                        data-target="#login">New Answer
+                        data-target="#login">Answer
                 </button>
             {% endif %}
         </div>
