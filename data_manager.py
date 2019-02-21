@@ -448,5 +448,28 @@ def change_user_data(cursor, user_id, data):
                    """, {"attribute": AsIs(list(data.keys())[0]), "value": list(data.values())[0], "user_id": user_id})
 
 
+@connection_handler
+def set_accept_answer(cursor, answer_id):
+    value_of_accepted = get_accepted_value(answer_id)
+    if value_of_accepted is False or value_of_accepted is None:
+        cursor.execute('''UPDATE  answer 
+                                SET accepted = TRUE 
+                                WHERE id =%(answer_id)s
+                                ''', {'answer_id': answer_id})
+    elif value_of_accepted is True:
+        cursor.execute('''UPDATE  answer 
+                                       SET accepted = FALSE 
+                                       WHERE id =%(answer_id)s
+                                       ''', {'answer_id': answer_id})
+
+
+@connection_handler
+def get_accepted_value(cursor, answer_id):
+    cursor.execute('''SELECT accepted FROM answer
+                            WHERE id = %(answer_id)s
+                             ''', {'answer_id': answer_id})
+    return cursor.fetchall()[0]['accepted']
+
+
 if __name__ == '__main__':
     print(list_all_users())

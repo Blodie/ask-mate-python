@@ -134,18 +134,12 @@
                                     </button>
                                     <a href="/answer/{{ answer['id'] }}/vote-up" class="btn btn-success btn-sm">►</a>
                                     {% if 'username' in session and user['id'] == question['user_id'] %}
-                                        <button onclick="changeText(this)" class="btn btn-dark btn-sm">☐</button>
+                                        {%  if answer['accepted'] == True %}
+                                            <form action= "/accept-answer/{{ answer['id']}}" method="post"> <button type="submit">✔</button></form>
+                                         {% else %}
+                                            <form action= "/accept-answer/{{ answer['id']}}" method="post"> <button type="submit">☐</button></form>
                                         {% endif %}
-                                    <script>
-                                        function changeText(id) {
-                                            if (id.innerHTML ==="☐" ) {
-                                                id.innerHTML = "✔";
-                                            }
-                                            else {
-                                                id.innerHTML = "☐"
-                                            }
-                                        }
-                                        </script>
+                                    {% endif %}
                                 {% else %}
                                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#login">
                                         ◄
