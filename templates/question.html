@@ -99,7 +99,7 @@
                             <p style="margin-bottom: 0px;font-size: 12px;font-style: italic;"> {{ comment['submission_time'] }} </p>
 
                         </td>
-                        {% if 'username' in session and user['name'] == session['username'] %}
+                        {% if 'username' in session and user['id'] == comment['user_id'] %}
                         <td>
                             <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                                 <div class="btn-group-vertical mr-2" role="group" aria-label="First group">
@@ -181,7 +181,7 @@
                                 <p style="margin-bottom: 0px;font-size: 12px;font-style: italic;"> {{ comment['submission_time'] }} </p>
 
                             </td>
-                            {% if 'username' in session and user['name'] == session['username'] %}
+                            {% if 'username' in session and user['id'] == comment['user_id'] %}
                             <td>
                                 <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                                     <div class="btn-group-vertical mr-2" role="group" aria-label="First group">
