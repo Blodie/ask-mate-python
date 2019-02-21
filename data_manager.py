@@ -417,7 +417,7 @@ def username_exists(cursor, username):
 
 @connection_handler
 def list_all_users(cursor):
-    cursor.execute('''SELECT name, pw FROM user_data''')
+    cursor.execute('''SELECT  name, email, first_name, last_name, name_tag, phone_number  FROM user_data''')
     return cursor.fetchall()
 
 

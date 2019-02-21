@@ -9,12 +9,13 @@
 <h2 align="center">Everything you want to know about registered users</h2>
 <div>
     <table border="10px">
-        <th align="center">UserName</th>
-        <th align="center">Hashed Password</th>
-        {% for user in users %}
-            <TR>
-                <TD>{{ user.name }}</TD>
-                <TD>{{ user.pw }}</TD>
+        {% for header  in users.keys() %}
+            <th align="center">{{ header }}</th>
+            {% endfor %}
+    {% for user in users %}
+            <TR>{%  for value in user %}
+                <TD>{{ value}}</TD>
+                {% endfor %}
             </TR>
         {% endfor %}
     </table>
