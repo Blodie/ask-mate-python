@@ -56,7 +56,7 @@ def get_question_by_id(cursor, id):
 
 @connection_handler
 def new_question(cursor, title, message, image=None):
-    userid = get_user_id_by_username(session['username'])
+    userid = get_id_by_username(session['username'])
     cursor.execute("""
                         INSERT INTO question (submission_time, view_number, vote_number, title, message, image, user_id)
                         VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s, %(user_id)s)
@@ -72,7 +72,7 @@ def new_question(cursor, title, message, image=None):
 
 @connection_handler
 def new_answer(cursor, question_id, message, image=None):
-    userid = get_user_id_by_username(session['username'])
+    userid = get_id_by_username(session['username'])
     cursor.execute("""
                             INSERT INTO answer (submission_time, vote_number, question_id, message, image, user_id)
                             VALUES (%(submission_time)s, 0, %(question_id)s, %(message)s, %(image)s, %(userid)s)
@@ -328,12 +328,12 @@ def delete_comment_by_comment_id(cursor, comment_id):
 
 
 @connection_handler
-def new_user(cursor, username, pw):
+def new_user(cursor, username, pw, email):
     cursor.execute("""
-                      INSERT INTO user_data (name, pw)
-                      VALUES (%(username)s, %(pw)s)
+                      INSERT INTO user_data (name, pw, email)
+                      VALUES (%(username)s, %(pw)s, %(email)s)
                     """,
-                   {'username': username, 'pw': pw})
+                   {'username': username, 'pw': pw, 'email': email})
 
 
 @connection_handler
@@ -351,12 +351,11 @@ def get_password_by_username(cursor, username):
 
 @connection_handler
 def get_info_by_user_id(cursor, user_id):
-    user_info = {'id': user_id}
     cursor.execute("""
-                    SELECT name FROM user_data
+                    SELECT * FROM user_data
                     WHERE id = %(user_id)s
                     """, {'user_id': user_id})
-    user_info['name'] = cursor.fetchall()[0]['name']
+    user_info = cursor.fetchall()[0]
 
     cursor.execute("""
                     SELECT * FROM question
@@ -365,18 +364,46 @@ def get_info_by_user_id(cursor, user_id):
     user_info['questions'] = cursor.fetchall()
 
     cursor.execute("""
-                        SELECT * FROM answer
-                        WHERE user_id = %(id)s
+                        SELECT answer.* FROM answer
+                        WHERE answer.user_id = %(id)s
                         """, {'id': user_info['id']})
     user_info['answers'] = cursor.fetchall()
+
+    for i, answer in enumerate(user_info['answers']):
+        cursor.execute("""
+                        SELECT * FROM question
+                        WHERE %(question_id)s = question.id
+                        """, {'question_id': answer['question_id']})
+        user_info['answers'][i]['question'] = cursor.fetchall()[0]
+        user_info['answers'][i]['question']['answer_numbers'] = get_answer_numbers_by_question_id(user_info['answers'][i]['question_id'])
+        user_info['answers'][i]['question']['tags'] = get_tags_by_question_id(user_info['answers'][i]['question_id'])
 
     cursor.execute("""
                         SELECT * FROM comment
                         WHERE user_id = %(id)s
                         """, {'id': user_info['id']})
     user_info['comments'] = cursor.fetchall()
+    for i, comment in enumerate(user_info['comments']):
+        if comment.get('question_id'):
+            user_info['comments'][i]['question'] = get_question_by_id(comment['question_id'])
+        else:
+            user_info['comments'][i]['answer'] = get_answer_by_answer_id(comment['answer_id'])
+            user_info['comments'][i]['question'] = get_question_by_id(comment['answer']['question_id'])
+
+        user_info['comments'][i]['question']['answer_numbers'] = get_answer_numbers_by_question_id(user_info['comments'][i]['question']['id'])
+        user_info['comments'][i]['question']['tags'] = get_tags_by_question_id(user_info['comments'][i]['question']['id'])
+
 
     return user_info
+
+
+@connection_handler
+def get_answer_numbers_by_question_id(cursor, question_id):
+    cursor.execute("""
+                    SELECT COUNT(*) AS "answer_numbers" FROM answer
+                    WHERE question_id = %(question_id)s                        
+                    """, {'question_id': question_id})
+    return cursor.fetchall()[0]['answer_numbers']
 
 
 @connection_handler
@@ -389,18 +416,17 @@ def username_exists(cursor, username):
 
 
 @connection_handler
-def get_user_id_by_username(cursor, username):
-    cursor.execute("""
-                    SELECT id FROM user_data
-                    WHERE name = %(name)s
-                    """, {'name': username})
-    return cursor.fetchall()[0]['id']
-
-
-@connection_handler
 def list_all_users(cursor):
     cursor.execute('''SELECT name, pw FROM user_data''')
     return cursor.fetchall()
+
+
+@connection_handler
+def change_user_data(cursor, user_id, data):
+    cursor.execute("""
+                    UPDATE user_data SET %(attribute)s = %(value)s
+                    WHERE id=%(user_id)s
+                   """, {"attribute": AsIs(list(data.keys())[0]), "value": list(data.values())[0], "user_id": user_id})
 
 
 if __name__ == '__main__':

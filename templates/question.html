@@ -265,17 +265,6 @@
                                 {% if session['logged_in'] == True %}
                                     <a href="/answer/{{ answer['id'] }}/vote-up" class="btn btn-success btn-sm">►</a>
                                     <a href="/answer/{{ answer['id'] }}/edit" class="btn btn-info btn-sm">✎</a>
-                                     <button  class="btn btn-dark btn-sm" onclick="changeText(this)">☐</button>
-                                    <script>
-                                        function changeText(id) {
-                                            if (id.innerHTML ==="☐" ) {
-                                                id.innerHTML = "✔";
-                                            }
-                                            else {
-                                                id.innerHTML = "☐"
-                                            }
-                                        }
-                                        </script>
                                 {% endif %}
                                 {% if session['logged_in'] == False %}
                                     <button type="button" class="btn btn-success btn-sm" data-toggle="modal"
