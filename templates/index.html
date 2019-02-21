@@ -13,7 +13,7 @@
         {% include 'navbar.html' %}
         {% if questions %}
         <div class="dropdown">
-            <a class="btn btn-secondary dropdown-toggle" style="margin-left: 12px" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="btn btn-info dropdown-toggle" style="margin-left: 12px" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Order by
             </a>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -53,12 +53,12 @@
         <h6>No questions</h6>
         {% endif %}
 
-        {% if session['logged_in'] == True %}
-            <a href="/add-question" class="btn btn-secondary btn">Ask question</a>
+        {% if 'username' in session %}
+            <a href="/add-question" class="btn btn-info btn">Ask question</a>
         {% endif %}
 
-        {% if session['logged_in'] == False %}
-            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#login">Ask question</button>
+        {% if 'username' not in session %}
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#login">Ask question</button>
         {% endif %}
 
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
