@@ -8,6 +8,41 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.css') }}">
         #}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+        <script>
+            function addTag(tag) {
+                let children = document.getElementById("tags_div").children;
+                let selectedTags = [];
+                for (let child of children) {
+                    selectedTags.push(child.id);
+                }
+                if (!selectedTags.includes(tag)) {
+                    let buttonGroup = document.createElement("div");
+                    buttonGroup.className = "btn-group";
+                    buttonGroup.id = tag;
+                    let tagEl = document.createElement("button");
+                    tagEl.className = "btn btn-sm btn-outline-primary";
+                    tagEl.style = "font-size: 14px;";
+                    tagEl.innerHTML = tag;
+                    tagEl.type = "button";
+                    let delEl = document.createElement("a");
+                    delEl.style = "font-size: 8px;vertical-align: middle";
+                    delEl.className = "btn btn-outline-dark btn-sm";
+                    delEl.innerHTML = "▬";
+                    delEl.addEventListener('click', function(e) {
+                        e.target.closest(".btn-group").remove();
+                        document.getElementById("newQuestionTags").value = document.getElementById("newQuestionTags").value.replace(";" + tag, "");
+                        console.log(document.getElementById("newQuestionTags").value);
+                      });
+                    buttonGroup.appendChild(tagEl);
+                    buttonGroup.appendChild(delEl);
+                    document.getElementById("tags_div").appendChild(buttonGroup);
+                    document.getElementById("newQuestionTags").value += ";" + tag;
+                    console.log(document.getElementById("newQuestionTags").value);
+                }
+            }
+        </script>
+
     </head>
     <body class="p-3 mb-2 bg-white text-black">
         {% include 'navbar.html' %}
@@ -54,7 +89,62 @@
         {% endif %}
 
         {% if 'username' in session %}
-            <a href="/add-question" class="btn btn-info btn">Ask question</a>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#ask_question">Ask question</button>
+
+
+            <div class="modal fade" id="ask_question" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Ask Question</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+                            <form action="/add-question" method="post">
+                                <div class="form-group">
+                                    <label for="exampleFormControlInput1">Question Title</label>
+                                    <input required minlength="10" name="title" type="text" class="form-control" id="exampleFormControlInput1" placeholder="Question Title">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleFormControlTextarea1">Message</label>
+                                    <textarea required minlength="10" name="msg" class="form-control" id="exampleFormControlTextarea1" rows="10" placeholder="Message"></textarea>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label for="exampleFormControlTextarea1">Tags</label>
+                                    <div id="tags_div">
+
+                                    </div>
+                                    <div style="display: inline-block" class="dropdown">
+                                        <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        +
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                            <span class="input-group">
+                                                <input name="tag" id="newTag" style="width: 120px" type="text">
+                                                <a class="btn btn-outline-success btn-sm" onClick="addTag(document.getElementById('newTag').value)">+</a>
+                                            </span>
+                                            {% for tag in all_tags %}
+                                            <a onclick="addTag('{{ tag.name }}')" class="dropdown-item">{{ tag['name'] }}</a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="newQuestionTags" name="new_question_tags" value="" />
+
+                                <button type="submit" class="btn btn-primary btn-block">Ask</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
         {% endif %}
 
         {% if 'username' not in session %}
@@ -70,6 +160,7 @@
                 $('#login').modal('show');
             });
         </script>
+
         {% endif %}
     </body>
 </html>

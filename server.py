@@ -56,7 +56,8 @@ def see_question(question_id):
 @app.route('/add-question', methods=['GET', 'POST'])
 def ask_question():
     if request.method == 'POST':
-        question = new_question(request.form['title'], request.form['msg'])
+        tag_names = request.form.get("new_question_tags")[1:].split(';')
+        question = new_question(request.form['title'], request.form['msg'], tag_names)
         return redirect(f'/question/{question["id"]}')
     return render_template('add_question.html', question=None)
 
@@ -151,11 +152,10 @@ def search():
     return render_template('index.html', user=user, failed_login=failed_login, signup=signup, questions=questions, answer_numbers=answer_numbers, tags=tags, all_tags=all_tags)
 
 
-@app.route('/<question_page>/<int:question_id>/add-tag')
-@app.route('/<int:question_id>/add-tag')
-def add_tag(question_id, question_page=False):
-    add_tag_to_question(question_id, request.args['tag'])
-    return redirect('/') if not question_page else redirect(f'/question/{question_id}')
+@app.route('/question/<int:question_id>/add-tag', methods=['POST'])
+def add_tag(question_id):
+    add_tag_to_question(question_id, request.form['tag'])
+    return redirect(f'/question/{question_id}')
 
 
 @app.route('/<question_page>/<int:question_id>/delete-tag/<int:tag_id>')

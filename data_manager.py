@@ -55,8 +55,20 @@ def get_question_by_id(cursor, id):
 
 
 @connection_handler
-def new_question(cursor, title, message, image=None):
+def new_tag(cursor, tag):
+    if not get_tag_id_by_name(tag):
+        cursor.execute("""
+                        INSERT INTO tag (name) 
+                        VALUES (%(tag_name)s)
+                        """, {'tag_name': tag})
+
+
+@connection_handler
+def new_question(cursor, title, message, tag_names, image=None):
     userid = get_id_by_username(session['username'])
+    for tag in tag_names:
+        new_tag(tag)
+
     cursor.execute("""
                         INSERT INTO question (submission_time, view_number, vote_number, title, message, image, user_id)
                         VALUES (%(submission_time)s, 0, 0, %(title)s, %(message)s, %(image)s, %(user_id)s)
@@ -67,6 +79,13 @@ def new_question(cursor, title, message, image=None):
                         SELECT * FROM question ORDER BY id DESC LIMIT 1
                    """)
     new_question = cursor.fetchall()[0]
+
+    for tag_name in tag_names:
+        tag_id = get_tag_id_by_name(tag_name)
+        cursor.execute("""
+                        INSERT INTO question_tag (question_id, tag_id)
+                        VALUES (%(question_id)s, %(tag_id)s)
+                        """, {'question_id': new_question['id'], 'tag_id': tag_id})
     return new_question
 
 

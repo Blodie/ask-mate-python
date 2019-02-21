@@ -61,13 +61,16 @@
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
                                     <span class="input-group">
-                                        <form action="/question/{{ question['id'] }}/add-tag" method="get">
+                                        <form action="/question/{{ question['id'] }}/add-tag" method="post">
                                             <input name="tag" style="width: 120px  " type="text">
                                             <button class="btn btn-outline-success btn-sm" type="submit">+</button>
                                         </form>
                                     </span>
                                     {% for tag in all_tags %}
-                                    <a href="/question/{{ question['id'] }}/add-tag?tag={{ tag['name'] }}" class="dropdown-item">{{ tag['name'] }}</a>
+                                    <form action="/question/{{ question['id'] }}/add-tag" method="post">
+                                        <input type="text" hidden value="{{ tag['name'] }}" name="tag">
+                                        <button type="submit" class="dropdown-item">{{ tag['name'] }}</button>
+                                    </form>
                                     {% endfor %}
                                 </div>
                             </div>
