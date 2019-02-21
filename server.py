@@ -65,7 +65,7 @@ def ask_question():
 def edit_question(question_id):
     if request.method == "POST":
         update_question(question_id, request.form['title'], request.form['msg'])
-        return redirect(f"/question/{question_id}?inc=False")
+        return redirect(f"/question/{question_id}")
     return render_template('add_question.html', question=get_question_by_id(question_id))
 
 
@@ -97,14 +97,14 @@ def delete_question(question_id):
 def delete_answer(answer_id):
     question_id = get_question_id_by_answer_id(answer_id)
     del_answer(answer_id)
-    return redirect(f"/question/{question_id}?inc=False")
+    return redirect(f"/question/{question_id}")
 
 
 @app.route('/question/<int:question_id>/vote-<vote>')
 def vote_on_question(question_id, vote):
     vote = True if vote == "up" else False
     vote_question(question_id, vote)
-    return redirect(f'/question/{question_id}?inc=False')
+    return redirect(f'/question/{question_id}')
 
 
 @app.route('/answer/<int:answer_id>/vote-<vote>')
@@ -112,14 +112,14 @@ def vote_on_answer(answer_id, vote):
     vote = True if vote == "up" else False
     question_id = get_question_id_by_answer_id(answer_id)
     vote_answer(answer_id, vote)
-    return redirect(f'/question/{question_id}?inc=False')
+    return redirect(f'/question/{question_id}')
 
 
 @app.route('/question/<int:question_id>/new-comment', methods=['GET', 'POST'])
 def add_comment_to_question(question_id):
     if request.method == 'POST':
         new_comment_on_question(question_id, request.form['comment'])
-        return redirect(f'/question/{question_id}?inc=False')
+        return redirect(f'/question/{question_id}')
     return render_template('comment.html', id=question_id)
 
 
@@ -128,7 +128,7 @@ def add_comment_to_answer(answer_id):
     question_id = get_question_id_by_answer_id(answer_id)
     if request.method == 'POST':
         new_comment_on_answer(answer_id, request.form['comment'])
-        return redirect(f'/question/{question_id}?inc=False')
+        return redirect(f'/question/{question_id}')
     return render_template('comment.html', id=question_id)
 
 
